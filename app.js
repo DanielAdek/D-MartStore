@@ -5,6 +5,7 @@ import jsend from 'jsend';
 import { config } from 'dotenv';
 
 import routes from './routes';
+import { errorMsg, successMsg } from './utils/message';
 
 config();
 const app = express();
@@ -38,30 +39,30 @@ app.use(jsend.middleware);
 ===================== */
 app.use('/api/v1', routes);
 
-app.get('/', (req, res) =>
-  res.status(200).jsend.success({
-    message: 'Application is up and running'
-  })
-);
+app.get('/', (req, res) => res.status(200).jsend.success(successMsg('Application is up and running', 200, '/', {
+  verb: req.method, protocol: req.protocol, url: req.url
+})));
 
 /**
  * @desc HANDLES NON EXISTING ROUTES
  */
 app
   .route('/*')
-  .all((req, res) => res.status(404).jsend.fail({ message: 'ERROR', error: 'Route Not Found' }));
+  .all((req, res) => res.status(404).jsend.fail(errorMsg('Route Invalid', 404, '', req.params, 'Route Not Found', {
+    error: true, verb: req.method, protocol: req.protocol
+  })));
 
 
 /**
  * @desc APPLICATION INITIALIZATION
  */
 app.listen(app.get('port'), () => {
-  if (process.env.NODE_ENV === "development") {
-    const message = '  App is initialized and running on http://localhost:%d in %s mode'
+  if (process.env.NODE_ENV === 'development') {
+    const message = '  App is initialized and running on http://localhost:%d in %s mode';
 
-    console.info(message, app.get('port'), app.get('env'))
-  
-    console.info('  Press CTRL-C to stop\n')
+    console.info(message, app.get('port'), app.get('env'));
+
+    console.info('  Press CTRL-C to stop\n');
   }
 });
 
