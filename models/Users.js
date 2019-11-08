@@ -26,6 +26,7 @@ const userSchema = new Schema({
     required: 'password is required'
   },
   role: String,
+  avatar: String,
   isActive: {
     type: Boolean,
     default: true
@@ -44,10 +45,8 @@ userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     const hash = await bcrypt.hash(this.password, 10);
     this.password = hash;
-    next();
-  } else {
-    next();
   }
+  next();
 });
 
 /* eslint-disable */
@@ -59,7 +58,6 @@ userSchema.methods.comparePassword = async function (password) {
 userSchema.methods.toJSON = function () {
   const _user = this.toObject();
   delete _user.password;
-  delete _user.__v;
   return _user;
 };
 
