@@ -1,6 +1,6 @@
 import { successMsg } from '../utils/message';
 /**
- * @desc CREATE SIGNUP
+ * @desc CREATE FEATURE
  * @param {*} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE INSERTED
  * @param {object} responseBody THE RESPONSE BODY TO BE SENT
@@ -13,7 +13,7 @@ exports.shouldInsertToDataBase = async (database, requestBody, responseBody, dat
 };
 
 /**
- * @desc CREATE SIGNUP
+ * @desc FIND FROM DB
  * @param {*} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE USED
  * @returns {object} JSON
