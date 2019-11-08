@@ -4213,6 +4213,11 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
+validate-phone-number-node-js@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/validate-phone-number-node-js/-/validate-phone-number-node-js-0.0.1.tgz#88ce5f7ee2ad53a1f469052a73b2e2ded77ec634"
+  integrity sha512-A9yVgLOYLyLhGKPFOxGsar9jQK/Ti4TKvEUrklQ26KWRxcV6xw9EzBBD9dCX6S+SeczxCuQgO1u3I/ne2tABYw==
+
 vary@^1, vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"

@@ -1,3 +1,4 @@
+import PhoneNumber from 'validate-phone-number-node-js';
 import { errorMsg } from './message';
 
 /**
@@ -64,7 +65,7 @@ exports.ValidateRequest = (type, requestBody) => {
   if (type.toLowerCase().trim() === 'signup') {
     // Confirm the request-body is complete
     const expectedRequest = {
-      username: '', email: '', phoneNumber: '', password: '', role: ''
+      username: '', email: '', phoneNumber: '', password: ''
     };
     const foundMissingKeys = compareTwoObjectsKeys(expectedRequest, requestBody);
 
@@ -85,6 +86,27 @@ exports.ValidateRequest = (type, requestBody) => {
     if (requestBody.password.length < 5) {
       return errorMsg('Validation Error', 400, 'password', 'SIGN UP', 'Password length should not be less than five');
     }
+    return { error: false };
+  }
+
+  // login form validation
+  if (type.toLowerCase().trim() === 'login') {
+    // Confirm the request-body is complete
+    const expectedRequest = { dataField: '', password: '' };
+    const foundMissingKeys = compareTwoObjectsKeys(expectedRequest, requestBody);
+
+    if (foundMissingKeys.missingFields.length || foundMissingKeys.isNullOrUndefined) {
+      return errorMsg(`${foundMissingKeys.isNullOrUndefined ? 'Object Property (value: null or undefined not accepted)' : 'Missing Fields'}`, 400, `${foundMissingKeys.missingFields.length ? foundMissingKeys.missingFields : foundMissingKeys.keyWithIsNullOrUndefined}`, 'Request Body', `${foundMissingKeys.isNullOrUndefined ? 'Value null or undefined not accepted. Replace null or undefined with empty string' : `There are ${foundMissingKeys.count} fields missing in your request: ${foundMissingKeys.missingFields}`}`);
+    }
+
+    if (!isEmail(requestBody.dataField) && !PhoneNumber.validate(requestBody.dataField)) {
+      return errorMsg('Validation Error', 401, 'Email/Phone Number', 'LOGIN', 'Please enter a valid email or phone number!');
+    }
+
+    if (isEmpty(requestBody.password)) {
+      return errorMsg('Validation Error', 401, 'password', 'LOGIN', 'password cannot be empty');
+    }
+
     return { error: false };
   }
 };

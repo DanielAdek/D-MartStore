@@ -21,7 +21,8 @@
     "gravatar": "^1.8.0",
     "jsend": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.7.8"
+    "mongoose": "^5.7.8",
+    "validate-phone-number-node-js": "^0.0.1"
   },
   "devDependencies": {
     "eslint": "^5.14.1",

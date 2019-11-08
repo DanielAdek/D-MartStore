@@ -1,6 +1,7 @@
 import gravatar from 'gravatar';
+import PhoneNumber from 'validate-phone-number-node-js';
 import db from '../models';
-import { errorMsg } from '../utils/message';
+import { errorMsg, successMsg } from '../utils/message';
 import Services from '../utils/validation';
 import Messanger from '../helpers/messanger';
 
@@ -13,7 +14,7 @@ export default class Customers {
    * @return {*} json
    */
   static async createAccount(req, res) {
-    const validationResult = Services.ValidateRequest('Signup', req.body);
+    const validationResult = Services.ValidateRequest('SIGNUP', req.body);
 
     if (validationResult.error) {
       return res.status(400).jsend.fail(validationResult);
@@ -49,7 +50,32 @@ export default class Customers {
    * @return {*} json
    */
   static async login(req, res) {
-    // YOUR CODE IS REQUIRED
+    const validationResult = Services.ValidateRequest('LOGIN', req.body);
+
+    if (validationResult.error) {
+      return res.status(400).jsend.fail(validationResult);
+    }
+
+    let user = null;
+    const isPhone = PhoneNumber.validate(req.body.dataField);
+
+    // QUERY DATABASE
+    if (!isPhone) {
+      user = await Messanger.shouldFindOneObject(db.Users, { email: req.body.dataField });
+    } else {
+      user = await Messanger.shouldFindOneObject(db.Users, { phoneNumber: req.body.dataField });
+    }
+
+    if (user) {
+      const passwordMatch = await user.comparePassword(req.body.password);
+
+      if (!passwordMatch) {
+        return res.status(401).jsend.fail(errorMsg('Authentication Error', 401, 'password', 'Authenticate user', 'Password Incorrect!', { error: true, operationStatus: 'Process Terminated', user: null }));
+      }
+
+      return res.status(200).jsend.success(successMsg('Authenticaton successful', 200, 'Authenting user', { error: false, operationStatus: 'Process Completed', user }));
+    }
+    return res.status(400).jsend.fail(errorMsg('Authentication Error', 400, 'Email/Phone Number', 'Authenticate user', `${isPhone ? 'The phone number you provide is not found!' : 'The email you provide is not found!'}`, { error: true, operationStatus: 'Process Terminated', user: null }));
   }
 
   /**
