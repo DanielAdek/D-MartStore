@@ -70,21 +70,21 @@ exports.ValidateRequest = (type, requestBody) => {
     const foundMissingKeys = compareTwoObjectsKeys(expectedRequest, requestBody);
 
     if (foundMissingKeys.missingFields.length || foundMissingKeys.isNullOrUndefined) {
-      return errorMsg(`${foundMissingKeys.isNullOrUndefined ? 'Object Property (value: null or undefined not accepted)' : 'Missing Fields'}`, 400, `${foundMissingKeys.missingFields.length ? foundMissingKeys.missingFields : foundMissingKeys.keyWithIsNullOrUndefined}`, 'Request Body', `${foundMissingKeys.isNullOrUndefined ? 'Value null or undefined not accepted. Replace null or undefined with empty string' : `There are ${foundMissingKeys.count} fields missing in your request: ${foundMissingKeys.missingFields}`}`);
+      return errorMsg(`${foundMissingKeys.isNullOrUndefined ? 'Object Property (value: null or undefined not accepted)' : 'Missing Fields'}`, 400, `${foundMissingKeys.missingFields.length ? foundMissingKeys.missingFields : foundMissingKeys.keyWithIsNullOrUndefined}`, 'Request Body', `${foundMissingKeys.isNullOrUndefined ? 'Value null or undefined not accepted. Replace null or undefined with empty string' : `There are ${foundMissingKeys.count} fields missing in your request: ${foundMissingKeys.missingFields}`}`, { error: true, operationStatus: 'Processs Terminated!' });
     }
 
     // Validate form fields
     if (isEmpty(requestBody.username)) {
-      return errorMsg('Validation Error', 400, 'username', 'SIGN UP', 'username cannot be empty');
+      return errorMsg('Validation Error', 400, 'username', 'SIGN UP', 'username cannot be empty', { error: true, operationStatus: 'Processs Terminated!' });
     }
     if (!isEmail(requestBody.email)) {
-      return errorMsg('Validation Error', 400, 'email', 'SIGN UP', 'email is invalid');
+      return errorMsg('Validation Error', 400, 'email', 'SIGN UP', 'email is invalid', { error: true, operationStatus: 'Processs Terminated!' });
     }
     if (isEmpty(requestBody.password)) {
-      return errorMsg('Validation Error', 400, 'password', 'SIGN UP', 'password cannot be empty');
+      return errorMsg('Validation Error', 400, 'password', 'SIGN UP', 'password cannot be empty', { error: true, operationStatus: 'Processs Terminated!' });
     }
     if (requestBody.password.length < 5) {
-      return errorMsg('Validation Error', 400, 'password', 'SIGN UP', 'Password length should not be less than five');
+      return errorMsg('Validation Error', 400, 'password', 'SIGN UP', 'Password length should not be less than five', { error: true, operationStatus: 'Processs Terminated!' });
     }
     return { error: false };
   }
@@ -96,15 +96,15 @@ exports.ValidateRequest = (type, requestBody) => {
     const foundMissingKeys = compareTwoObjectsKeys(expectedRequest, requestBody);
 
     if (foundMissingKeys.missingFields.length || foundMissingKeys.isNullOrUndefined) {
-      return errorMsg(`${foundMissingKeys.isNullOrUndefined ? 'Object Property (value: null or undefined not accepted)' : 'Missing Fields'}`, 400, `${foundMissingKeys.missingFields.length ? foundMissingKeys.missingFields : foundMissingKeys.keyWithIsNullOrUndefined}`, 'Request Body', `${foundMissingKeys.isNullOrUndefined ? 'Value null or undefined not accepted. Replace null or undefined with empty string' : `There are ${foundMissingKeys.count} fields missing in your request: ${foundMissingKeys.missingFields}`}`);
+      return errorMsg(`${foundMissingKeys.isNullOrUndefined ? 'Object Property (value: null or undefined not accepted)' : 'Missing Fields'}`, 400, `${foundMissingKeys.missingFields.length ? foundMissingKeys.missingFields : foundMissingKeys.keyWithIsNullOrUndefined}`, 'Request Body', `${foundMissingKeys.isNullOrUndefined ? 'Value null or undefined not accepted. Replace null or undefined with empty string' : `There are ${foundMissingKeys.count} fields missing in your request: ${foundMissingKeys.missingFields}`}`, { error: true, operationStatus: 'Processs Terminated!' });
     }
 
     if (!isEmail(requestBody.dataField) && !PhoneNumber.validate(requestBody.dataField)) {
-      return errorMsg('Validation Error', 401, 'Email/Phone Number', 'LOGIN', 'Please enter a valid email or phone number!');
+      return errorMsg('Validation Error', 401, 'Email/Phone Number', 'LOGIN', 'Please enter a valid email or phone number!', { error: true, operationStatus: 'Processs Terminated!' });
     }
 
     if (isEmpty(requestBody.password)) {
-      return errorMsg('Validation Error', 401, 'password', 'LOGIN', 'password cannot be empty');
+      return errorMsg('Validation Error', 401, 'password', 'LOGIN', 'password cannot be empty', { error: true, operationStatus: 'Processs Terminated!' });
     }
 
     return { error: false };

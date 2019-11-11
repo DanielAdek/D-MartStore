@@ -2,6 +2,7 @@ import gravatar from 'gravatar';
 import PhoneNumber from 'validate-phone-number-node-js';
 import db from '../models';
 import { errorMsg, successMsg } from '../utils/message';
+import Utils from '../helpers';
 import Services from '../utils/validation';
 import Messanger from '../helpers/messanger';
 
@@ -24,7 +25,7 @@ export default class Customers {
     const foundCustomer = await Messanger.shouldFindOneObject(db.Users, { email: req.body.email });
 
     if (foundCustomer) {
-      return res.status(400).jsend.fail(errorMsg('Insertion Error', 400, 'email', 'Create Customer Account', 'Email already exist'));
+      return res.status(400).jsend.fail(errorMsg('Insertion Error', 400, 'email', 'Create Customer Account', 'Email already exist', { error: true, operationStatus: 'Processs Terminated!' }));
     }
 
     // Create customer account
@@ -38,9 +39,13 @@ export default class Customers {
       username, email, password, phoneNumber, role: 'customer', avatar
     };
 
-    const response = { message: 'Account created!', statusCode: 201, target: 'Create Customer Account' };
+    const user = await Messanger.shouldInsertToDataBase(db.Users, customer);
 
-    Messanger.shouldInsertToDataBase(db.Users, customer, res, response);
+    const token = Utils.generateToken('8760h', { id: user._id });
+
+    return res.status(201).jsend.success(successMsg('Account created!', 201, 'Create Customer Account', {
+      error: false, operationStatus: 'Operation Successful!', user, token
+    }));
   }
 
   /**
@@ -73,7 +78,11 @@ export default class Customers {
         return res.status(401).jsend.fail(errorMsg('Authentication Error', 401, 'password', 'Authenticate user', 'Password Incorrect!', { error: true, operationStatus: 'Process Terminated', user: null }));
       }
 
-      return res.status(200).jsend.success(successMsg('Authenticaton successful', 200, 'Authenting user', { error: false, operationStatus: 'Process Completed', user }));
+      const token = Utils.generateToken('8760h', { id: user._id });
+
+      return res.status(200).jsend.success(successMsg('Authenticaton successful', 200, 'Authenting user', {
+        error: false, operationStatus: 'Process Completed', user, token
+      }));
     }
     return res.status(400).jsend.fail(errorMsg('Authentication Error', 400, 'Email/Phone Number', 'Authenticate user', `${isPhone ? 'The phone number you provide is not found!' : 'The email you provide is not found!'}`, { error: true, operationStatus: 'Process Terminated', user: null }));
   }
