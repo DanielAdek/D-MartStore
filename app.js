@@ -40,7 +40,7 @@ app.use(jsend.middleware);
 app.use('/api/v1', routes);
 
 app.get('/', (req, res) => res.status(200).jsend.success(successMsg('Application is up and running', 200, '/', {
-  verb: req.method, protocol: req.protocol, url: req.url
+  verb: req.method, protocol: req.protocol, url: req.url, operationStatus: 'Proccess Completed!'
 })));
 
 /**
@@ -49,7 +49,7 @@ app.get('/', (req, res) => res.status(200).jsend.success(successMsg('Application
 app
   .route('/*')
   .all((req, res) => res.status(404).jsend.fail(errorMsg('Route Invalid', 404, '', req.params, 'Route Not Found', {
-    error: true, verb: req.method, protocol: req.protocol
+    error: true, verb: req.method, protocol: req.protocol, operationStatus: 'Process Failed'
   })));
 
 
