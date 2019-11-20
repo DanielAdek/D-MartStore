@@ -12,3 +12,11 @@ const secret = process.env.SECRET;
  * @returns {String} JSON
  */
 exports.generateToken = (time, payload) => (`Bearer ${JWT.sign(payload, secret, { expiresIn: time })}`);
+
+/**
+ * @desc CONFIRM IDs ARE THE SAME
+ * @param {object} firstId THE EXPIRY TIME
+ * @param {object} secondId THE DATA TO BE CONTAINED IN THE TOKEN
+ * @returns {boolean} true or false
+ */
+exports.identitiesMatch = (firstId, secondId) => (firstId.equals(secondId));
