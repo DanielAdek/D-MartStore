@@ -1,10 +1,10 @@
 import gravatar from 'gravatar';
-import PhoneNumber from 'validate-phone-number-node-js';
 import db from '../models';
-import { errorMsg, successMsg } from '../utils/message';
 import Utils from '../helpers';
 import Services from '../utils/validation';
 import Messanger from '../helpers/messanger';
+import { isPhoneNumber } from '../utils/regex';
+import { errorMsg, successMsg } from '../utils/message';
 
 /** @class */
 export default class Customers {
@@ -25,7 +25,7 @@ export default class Customers {
     const foundCustomer = await Messanger.shouldFindOneObject(db.Users, { email: req.body.email });
 
     if (foundCustomer) {
-      return res.status(400).jsend.fail(errorMsg('Insertion Error', 400, 'email', 'Create Customer Account', 'Email already exist', { error: true, operationStatus: 'Processs Terminated!' }));
+      return res.status(409).jsend.fail(errorMsg('Insertion Error', 409, 'email', 'Create Customer Account', 'Email already exist', { error: true, operationStatus: 'Processs Terminated!' }));
     }
 
     // Create customer account
@@ -62,7 +62,7 @@ export default class Customers {
     }
 
     let user = null;
-    const isPhone = PhoneNumber.validate(req.body.dataField);
+    const isPhone = isPhoneNumber(req.body.dataField);
 
     // QUERY DATABASE
     if (!isPhone) {
