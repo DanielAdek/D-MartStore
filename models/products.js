@@ -14,14 +14,15 @@ const ProductSchema = new Schema({
     required: 'Product Name is required'
   },
   productPrice: {
-    type: String,
+    type: Number,
     trim: true,
     required: 'Product price is required'
   },
-  productDetails: {
+  productDescription: {
     type: String,
     trim: true,
   },
+  productImages: [{ image: { type: String, trim: true } }],
   productStatus: String,
   productBrand: String,
   productCategory: String,

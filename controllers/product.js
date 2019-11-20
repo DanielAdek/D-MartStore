@@ -22,26 +22,22 @@ export default class Products {
 
       // Create product
       const {
-        productName, productImages, productPrice, productDetails, productBrand, productCategory, productCaptionHeading
+        productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading
       } = req.body;
 
       const { _id: ownersId } = req.user;
 
       const newProduct = {
-        ownersId, productName, productPrice, productDetails, productBrand, productCategory, productCaptionHeading
+        ownersId, productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading
       };
 
       const product = await Messanger.shouldInsertToDataBase(db.Products, newProduct);
 
-      const objectImage = { ownersId, productsId: product._id, productImages };
-
-      const imageData = await Messanger.shouldInsertToDataBase(db.ProductsImages, objectImage);
-
       return res.status(201).jsend.success(successMsg('Success!', 201, 'Product Created Successfully', {
-        error: false, operationStatus: 'Operation Successful!', product: { product, imageData }
+        error: false, operationStatus: 'Operation Successful!', product
       }));
     } catch (error) {
-      return res.status(500).jsend.fail(errorMsg('ServerError', 500, '', 'Create Product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Create Product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }
   }
 
@@ -53,18 +49,18 @@ export default class Products {
    */
   static async retrieveProducts(req, res) {
     try {
-      const products = await Messanger.shouldFindObjects(db.ProductsImages, {}).sort({ createdAt: 'desc' }).populate('productsId').populate('ownersId');
+      const products = await Messanger.shouldFindObjects(db.Products, {}).sort({ createdAt: 'desc' }).populate('ownersId');
 
       if (products.length) {
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Products returned Successfully', {
           error: false, operationStatus: 'Operation Successful!', products
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('No-Data!', 404, 'No Field', 'Find all product', 'Nothing Found For Products!', {
+      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find all product', 'Nothing Found For Products!', {
         error: false, operationStatus: 'Operation Ended', products
       }));
     } catch (error) {
-      return res.status(500).jsend.fail(errorMsg(`${error.syscall || 'Server Error'}`, 500, `${error.path || 'No Field'}`, 'Find all products', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all products', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
     }
   }
 
@@ -76,18 +72,20 @@ export default class Products {
    */
   static async retrieveOneProduct(req, res) {
     try {
-      const products = await Messanger.shouldFindOneObject(db.ProductsImages, { productsId: req.params.productId }).populate('productsId').populate('ownersId');
+      const product = await Messanger.shouldFindOneObject(db.Products, { _id: req.params.productId }).populate('ownersId');
 
-      if (products) {
+      if (product) {
+        const relatedProducts = await Messanger.shouldFindObjects(db.Products, { productCategory: product.productCategory }).sort({ createdAt: 'desc' });
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
-          error: false, operationStatus: 'Operation Successful!', products
+          error: false, operationStatus: 'Operation Successful!', product, relatedProducts
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('No-Data!', 404, 'No Field', 'Find one product', 'Nothing found for request!', {
-        error: false, operationStatus: 'Operation Completed', products
+
+      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find one product', 'Nothing found for request!', {
+        error: false, operationStatus: 'Operation Completed',
       }));
     } catch (error) {
-      return res.status(500).jsend.fail(errorMsg(`${error.name || 'Server Error'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+      return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
     }
   }
 
@@ -131,7 +129,7 @@ export default class Products {
 
       return res.status(200).jsend.success(successMsg('Edited Successfuly!', 200, 'edit product', { error: false, operationStatus: 'Process Completed!', editedProduct }));
     } catch (error) {
-      return res.status(500).jsend.fail(errorMsg('ServerError', 500, '', 'Edit product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Edit product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }
   }
 
@@ -179,7 +177,7 @@ export default class Products {
 
       return res.status(200).jsend.success(successMsg('Deleted Successfuly!', 200, 'delete product', { error: false, operationStatus: 'Process Completed!' }));
     } catch (error) {
-      return res.status(500).jsend.fail(errorMsg('ServerError', 500, '', 'delete product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'delete product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }
   }
 }

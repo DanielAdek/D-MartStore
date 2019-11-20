@@ -18,7 +18,7 @@ export default {
     productName: { field: 'productName', required: true, isName: true },
     productImages: { field: 'productImages', required: true, isArray: true },
     productPrice: { field: 'productPrice', required: true, isDecimal: true },
-    productDetails: { field: 'productDetails', required: true },
+    productDesc: { field: 'productDescription', required: true },
     productBrand: { field: 'productBrand', required: true },
     productCategory: { field: 'productCategory', required: true },
     productCaptionHeading: { field: 'productCaptionHeading', required: true }
