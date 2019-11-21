@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { config } from 'dotenv';
 import Users from './Users';
 import Products from './products';
+import Orders from './order';
 
 config();
 
@@ -36,5 +37,5 @@ mongoose.connection.on('error', (err) => {
 });
 
 export default {
-  Users, Products
+  Users, Products, Orders
 };

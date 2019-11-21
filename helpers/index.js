@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import JWT from 'jsonwebtoken';
+import Object from '../middlewares/verify';
 
 config();
 
@@ -14,9 +15,9 @@ const secret = process.env.SECRET;
 exports.generateToken = (time, payload) => (`Bearer ${JWT.sign(payload, secret, { expiresIn: time })}`);
 
 /**
- * @desc CONFIRM IDs ARE THE SAME
- * @param {object} firstId THE EXPIRY TIME
- * @param {object} secondId THE DATA TO BE CONTAINED IN THE TOKEN
- * @returns {boolean} true or false
+ * @desc GET OBJECT FROM TOKEN PROVIDED
+ * @param {String} dataBase DATA-BASE TO FIND USER
+ * @param {object} req EXPRESS REQUEST OBJECT TO GET TOKEN FROM AUTHORIZATION
+ * @returns {String} JSON
  */
-exports.identitiesMatch = (firstId, secondId) => (firstId.equals(secondId));
+exports.objectFromToken = (dataBase, req) => Object.vAuth(req.headers.authorization.split(' ')[1], secret, dataBase);

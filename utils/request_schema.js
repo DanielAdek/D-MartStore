@@ -26,5 +26,15 @@ export default {
   productEditFrom: {
     formType: 'edit_product',
     productPrice: { field: 'productPrice', required: true, isDecimal: true }
+  },
+  orderForm: {
+    formType: 'create_order',
+    recipientName: { field: 'recipientName', isName: true },
+    deliveryAdr: { field: 'recipientDeliveryAdr' },
+    email: { field: 'recipientEmail', isEmail: true },
+    phone: { field: 'recipientPhoneNumber', isPhoneNumber: true },
+    note: { field: 'recipientOrderNote' },
+    payOpt: { field: 'orderPaymentOption', required: true },
+    productId: { field: 'productId', required: true, isArray: true }
   }
 };
