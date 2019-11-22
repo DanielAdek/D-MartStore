@@ -36,5 +36,14 @@ export default {
     note: { field: 'recipientOrderNote' },
     payOpt: { field: 'orderPaymentOption', required: true },
     productId: { field: 'productId', required: true, isArray: true }
+  },
+  kartForm: {
+    formType: 'create_kart',
+    quatity: { field: 'quantity', isInteger: true, required: true },
+    itemId: { field: 'productId', required: true }
+  },
+  editKartForm: {
+    formType: 'edit_kart',
+    arrayOfItems: { field: 'itemsInKart', isArray: true, required: true },
   }
 };

@@ -9,8 +9,8 @@ const OrderSchema = new Schema({
     ref: 'User'
   },
   productId: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Product'
+    itemId: { type: Schema.Types.ObjectId, ref: 'Product' },
+    kartId: { type: Schema.Types.ObjectId, ref: 'Kart' }
   }],
   recipientName: {
     type: String,

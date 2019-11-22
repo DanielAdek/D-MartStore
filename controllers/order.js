@@ -55,6 +55,21 @@ export default class Order {
 
       const newOrder = await Messanger.shouldInsertToDataBase(db.Orders, orderData);
 
+      // UPDATE ORDER COUNT IN PRODUCT
+      const products = await Messanger.shouldFindObjects(db.Products, {});
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const product of products) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const id of productId) {
+          if (product._id.equals(id)) {
+            product.onOrderCount += 1;
+          }
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await product.save();
+      }
+
       return res.status(201).jsend.success(successMsg('Success!', 201, 'Order Created Successfully', {
         error: false, operationStatus: 'Operation Successful!', newOrder
       }));
