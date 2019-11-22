@@ -128,7 +128,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
             Object.keys(requestBody).forEach((body) => {
               if (body === object.field) {
                 if (typeof requestBody[body] === 'string' && isEmpty(requestBody[body]) && object.required) {
-                  errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${body}`, `${formType}`, `${splitCamelCaseWord(body)} cannot be empty`, { error: true, operationStatus: 'Processs Terminated!' });
+                  errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${body}`, `${formType}`, `${splitCamelCaseWord(body)} cannot be empty`, { error: true, operationStatus: 'Processs Terminated!' });
                 }
               }
             });
@@ -142,7 +142,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
           Object.keys(requestBody).forEach((key) => {
             emailField.forEach((obj) => {
               if (key === obj.field && !isEmail(requestBody[key])) {
-                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 422, `${obj.field}`, `${formType}`, `${splitCamelCaseWord(obj.field)} is invalid. Email should look like e.g example@mail.com`, { error: true, operationStatus: 'Processs Terminated!' });
+                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 422, `${obj.field}`, `${formType}`, `${splitCamelCaseWord(obj.field)} is invalid. Email should look like e.g example@mail.com`, { error: true, operationStatus: 'Processs Terminated!' });
               }
             });
           });
@@ -155,7 +155,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
           Object.keys(requestBody).forEach((key) => {
             phoneFields.forEach((obj) => {
               if (obj.field === key && !isPhoneNumber(requestBody[key])) {
-                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 422, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} is invalid. You can try using a number like +2348180000009`, { error: true, operationStatus: 'Processs Terminated!' });
+                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 422, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} is invalid. You can try using a number like +2348180000009`, { error: true, operationStatus: 'Processs Terminated!' });
               }
             });
           });
@@ -169,7 +169,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
             maxMinFields.forEach((obj) => {
               if (typeof requestBody[key] === 'string') {
                 if ((obj.field === key && requestBody[key].length > obj.max) || (obj.field === key && requestBody[key].length < obj.min)) {
-                  errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${key}`, `${formType}`, ` The min characters expected for this field: ${splitCamelCaseWord(obj.field)}, is ${obj.min} with a max of ${obj.max}.`, { error: true, operationStatus: 'Processs Terminated!' });
+                  errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${key}`, `${formType}`, ` The min characters expected for this field: ${splitCamelCaseWord(obj.field)}, is ${obj.min} with a max of ${obj.max}.`, { error: true, operationStatus: 'Processs Terminated!' });
                 }
               }
             });
@@ -183,7 +183,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
           Object.keys(requestBody).forEach((key) => {
             fieldsWithArrayAsValues.forEach((obj) => {
               if (obj.field === key && !Array.isArray(requestBody[key])) {
-                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should be an array dataType`, { error: true, operationStatus: 'Processs Terminated!' });
+                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should be an array dataType`, { error: true, operationStatus: 'Processs Terminated!' });
               }
             });
           });
@@ -196,7 +196,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
           Object.keys(requestBody).forEach((key) => {
             fieldsWithObjectAsValues.forEach((obj) => {
               if (obj.field === key && typeof requestBody[key] !== 'object' && requestBody[key] !== null) {
-                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should be an object literal dataType`, { error: true, operationStatus: 'Processs Terminated!' });
+                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should be an object literal dataType`, { error: true, operationStatus: 'Processs Terminated!' });
               }
             });
           });
@@ -209,7 +209,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
           Object.keys(requestBody).forEach((key) => {
             fieldsWithDecimalValues.forEach((obj) => {
               if (obj.field === key && !isDecimal(requestBody[key])) {
-                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should be a decimal value`, { error: true, operationStatus: 'Processs Terminated!' });
+                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should be a decimal value`, { error: true, operationStatus: 'Processs Terminated!' });
               }
             });
           });
@@ -222,7 +222,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
           Object.keys(requestBody).forEach((key) => {
             fieldsWithAlphaValues.forEach((obj) => {
               if (obj.field === key && !isAlpha(requestBody[key])) {
-                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should only be alphabets`, { error: true, operationStatus: 'Processs Terminated!' });
+                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should only be alphabets`, { error: true, operationStatus: 'Processs Terminated!' });
               }
             });
           });
@@ -235,7 +235,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
           Object.keys(requestBody).forEach((key) => {
             fieldsWithIntegerValues.forEach((obj) => {
               if (obj.field === key && !isInteger(requestBody[key])) {
-                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should only be integers`, { error: true, operationStatus: 'Processs Terminated!' });
+                errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should only be an integer`, { error: true, operationStatus: 'Processs Terminated!' });
               }
             });
           });
@@ -248,7 +248,7 @@ exports.ValidateRequest = (formType, requestBody, customErrorObject) => {
             fieldsWithNameValues.forEach((obj) => {
               if (typeof request[key] === 'string') {
                 if (obj.field === key && !isName(requestBody[key]) && request[key].trim() !== '') {
-                  errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('Validation Error', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should not contain characters: (#@$!±^&*+=">?{</}_|)`, { error: true, operationStatus: 'Processs Terminated!' });
+                  errorMessage = customErrorObject ? { error: true, customErrorObject } : errorMsg('ValidationError', 400, `${key}`, `${formType}`, `${splitCamelCaseWord(obj.field)} should not contain characters: (#@$!±^&*+=">?{</}_|)`, { error: true, operationStatus: 'Processs Terminated!' });
                 }
               }
             });
