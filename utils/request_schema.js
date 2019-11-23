@@ -45,5 +45,18 @@ export default {
   editKartForm: {
     formType: 'edit_kart',
     arrayOfItems: { field: 'itemsInKart', isArray: true, required: true },
+  },
+  reviewForm: {
+    formType: 'create_review',
+    username: { field: 'username' },
+    email: { field: 'email', isEmail: true },
+    review: { field: 'review' },
+    rate: { field: 'rating', isInteger: true, range: { from: 1, to: 5 } },
+  },
+  editReviewForm: {
+    formType: 'edit_review',
+    review: { field: 'review' },
+    email: { field: 'email', isEmail: true },
+    rate: { field: 'rating', isInteger: true, range: { from: 1, to: 5 } },
   }
 };
