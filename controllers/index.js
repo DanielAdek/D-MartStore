@@ -1,10 +1,11 @@
+import Administratives from './admin';
 import Customer from './customer';
 import Product from './product';
+import WishList from './wishlist';
 import Kart from './kart';
 import Order from './order';
 import Review from './review';
-import Administratives from './admin';
 
 export {
-  Customer, Administratives, Product, Kart, Order, Review
+  Administratives, Customer, Product, WishList, Kart, Order, Review
 };
