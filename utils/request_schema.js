@@ -58,5 +58,9 @@ export default {
     review: { field: 'review' },
     email: { field: 'email', isEmail: true },
     rate: { field: 'rating', isInteger: true, range: { from: 1, to: 5 } },
+  },
+  wishlistForm: {
+    formType: 'create_wishlist',
+    wishCode: { field: 'wishlistcode' }
   }
 };

@@ -5,6 +5,7 @@ import Products from './products';
 import Karts from './kart';
 import Orders from './order';
 import Reviews from './review';
+import WishLists from './wishlist';
 
 config();
 
@@ -39,5 +40,5 @@ mongoose.connection.on('error', (err) => {
 });
 
 export default {
-  Users, Products, Karts, Orders, Reviews
+  Users, Products, Karts, Orders, Reviews, WishLists
 };

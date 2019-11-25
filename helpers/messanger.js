@@ -1,6 +1,6 @@
 /**
  * @desc CREATE FEATURE
- * @param {*} database DATA-BASE TO RECEIVE DATA
+ * @param {Document} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE INSERTED
  * @param {object} data DATA FOR USER
  * @returns {object} JSON
@@ -9,7 +9,7 @@ exports.shouldInsertToDataBase = (database, requestBody) => database.create(requ
 
 /**
  * @desc FIND FROM DB
- * @param {*} database DATA-BASE TO RECEIVE DATA
+ * @param {Document} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE USED
  * @returns {object} JSON
  */
@@ -17,7 +17,7 @@ exports.shouldFindOneObject = (database, requestBody) => database.findOne(reques
 
 /**
  * @desc FIND FROM DB
- * @param {*} database DATA-BASE TO RECEIVE DATA
+ * @param {Document} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE USED
  * @returns {object} JSON
  */
@@ -25,7 +25,7 @@ exports.shouldFindObjects = (database, requestBody) => database.find(requestBody
 
 /**
  * @desc FIND AND UPDATE
- * @param {*} database DATA-BASE TO RECEIVE DATA
+ * @param {Document} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE USED
  * @returns {object} JSON
  */
@@ -33,8 +33,23 @@ exports.shouldEditOneObject = (database, requestBody) => database.findByIdAndUpd
 
 /**
  * @desc FIND AND UPDATE
- * @param {*} database DATA-BASE TO RECEIVE DATA
+ * @param {Document} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE USED
  * @returns {object} JSON
  */
 exports.shouldDeleteOneObject = (database, requestBody) => database.findByIdAndRemove(requestBody.id);
+
+/**
+ * @desc INSERT MANY OBJECTS TO DATA-BASE
+ * @param {Document} database DATA-BASE TO RECEIVE DATA
+ * @param {object} requestBody THE REQUEST BODY TO BE USED
+ * @returns {object} JSON
+ */
+exports.shouldInsertManyObjects = (database, requestBody) => {
+  if (Array.isArray(requestBody)) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const object of requestBody) {
+      database.create(object);
+    }
+  }
+};

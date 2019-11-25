@@ -23,7 +23,7 @@ const ProductSchema = new Schema({
     trim: true,
   },
   productImages: [{ image: { type: String, trim: true } }],
-  productStatus: String,
+  productStatus: { type: String, default: 'In-Stock' },
   productBrand: String,
   productCategory: String,
   productDemandStatus: String,
