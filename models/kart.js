@@ -11,6 +11,10 @@ const KartSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Product'
   },
+  imageType: {
+    type: Number,
+    default: 1,
+  },
   quantity: {
     type: Number,
     default: 1,
@@ -19,7 +23,12 @@ const KartSchema = new Schema({
   cummulativePrice: {
     type: Number,
     default: 0
-  }
+  },
+  kartCode: {
+    type: String,
+    trim: true
+  },
+  recentKart: { type: Boolean, default: true }
 },
 {
   timestamps: true

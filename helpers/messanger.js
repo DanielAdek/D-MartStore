@@ -45,11 +45,13 @@ exports.shouldDeleteOneObject = (database, requestBody) => database.findByIdAndR
  * @param {object} requestBody THE REQUEST BODY TO BE USED
  * @returns {object} JSON
  */
-exports.shouldInsertManyObjects = (database, requestBody) => {
+exports.shouldInsertOneOrMoreObjects = (database, requestBody) => {
   if (Array.isArray(requestBody)) {
     // eslint-disable-next-line no-restricted-syntax
     for (const object of requestBody) {
       database.create(object);
     }
+  } else {
+    database.create(requestBody);
   }
 };

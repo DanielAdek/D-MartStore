@@ -34,6 +34,7 @@ const OrderSchema = new Schema({
     type: String,
     trim: true
   },
+  recent: { type: Boolean, default: true },
   sumTotalOrdersPrice: Number,
   orderPaymentOption: String,
   paymentStatus: { type: String, default: 'pending' },

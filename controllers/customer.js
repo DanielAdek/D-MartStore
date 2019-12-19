@@ -30,13 +30,13 @@ export default class Customers {
 
     // Create customer account
     const {
-      username, email, password, phoneNumber
+      username, email, password, phoneNumber, userAddress
     } = req.body;
 
     const avatar = gravatar.url(email, { s: '100', r: 'x', d: 'retro' }, true);
 
     const customer = {
-      username, email, password, phoneNumber, role: 'customer', avatar
+      username, email, password, phoneNumber, role: 'customer', avatar, userAddress
     };
 
     const user = await Messanger.shouldInsertToDataBase(db.Users, customer);
@@ -88,13 +88,38 @@ export default class Customers {
   }
 
   /**
-   * @method retrieveCustomers
+   * @method generateCode
    * @param {object} req The request object
    * @param {object} res The response object
    * @return {*} json
    */
-  static async retrieveCustomers(req, res) {
-    // YOUR CODE IS REQUIRED
+  static async generateCode(req, res) {
+    try {
+      const generateCode = Utils.generateTextCode(100);
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'Code Generated Successfully!', {
+        error: false, operationStatus: 'Operation Successful!', generatedCode: `eyJhbDMS.${generateCode}.eyJpZCI6IjVkZDQ1MjY3ZWJlZTU2MGUwMWZjMDIzNCIsImlhdCI6MTU3NjMyMTEzNiwiZXhwIjoxNjA3ODU3MTM2fQ`
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Generate Code', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
+  }
+
+  /**
+   * @method retrieveCustomerDetails
+   * @param {object} req The request object
+   * @param {object} res The response object
+   * @return {*} json
+   */
+  static async retrieveCustomerDetails(req, res) {
+    try {
+      console.log({ _id: req.user._id });
+      const user = await Messanger.shouldFindOneObject(db.Users, { _id: req.user._id });
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'Customer Details Retrieved Successfully!', {
+        error: false, operationStatus: 'Operation Successful!', user
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Retrieve user', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
   }
 
   /**

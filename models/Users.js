@@ -20,6 +20,10 @@ const userSchema = new Schema({
     type: String,
     trim: true
   },
+  userAddress: {
+    type: String,
+    trim: true
+  },
   password: {
     type: String,
     trim: true,

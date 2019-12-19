@@ -29,26 +29,47 @@ export default class Kart {
       }
       const { _id: customerId } = result;
 
-      const { productId, quantity } = req.body;
+      const { kartData } = req.body;
 
-      const product = await Messanger.shouldFindOneObject(db.Products, { _id: productId });
+      const { kartCode } = req.query;
 
-      // CALCULATE CUMMULATIVE PRICE
-      const cummulativePrice = product.productPrice * quantity;
+      if (!kartCode && !token) {
+        return res.status(400).jsend.fail(errorMsg('CastError', 400, 'req.query', 'Add product to kart', 'Token was not sent. Please reload your page!', {
+          error: false, operationStatus: 'Operation Ended'
+        }));
+      }
 
-      // CREATE Kart
-      const KartData = {
-        customerId, productId, quantity, cummulativePrice
-      };
+      if (Array.isArray(kartData)) {
+        const products = await Messanger.shouldFindObjects(db.Products, {});
+        // eslint-disable-next-line no-restricted-syntax
+        for (const product of products) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const Item of kartData) {
+            if (product._id.equals(Item.productId)) {
+              Item.cummulativePrice = product.productPrice * Item.quantity;
+              if (token) { Item.customerId = customerId; }
+              if (!token) { Item.kartCode = kartCode; }
+            }
+          }
+          product.inCartCount += 1;
+          // eslint-disable-next-line no-await-in-loop
+          await product.save();
+        }
+      }
 
-      const newKart = await Messanger.shouldInsertToDataBase(db.Karts, KartData);
+      if (!Array.isArray(kartData) && typeof kartData === 'object') {
+        const product = await Messanger.shouldFindOneObject(db.Products, { _id: kartData.productId });
+        kartData.cummulativePrice = product.productPrice * kartData.quantity;
+        if (token) { kartData.customerId = customerId; }
+        if (!token) { kartData.kartCode = kartCode; }
+        product.inCartCount += 1;
+        await product.save();
+      }
 
-      // UPDATE KART COUNT IN PRODUCT
-      product.inCartCount += 1;
+      // CREATE KART
+      const newKart = await Messanger.shouldInsertOneOrMoreObjects(db.Karts, kartData);
 
-      await product.save();
-
-      return res.status(201).jsend.success(successMsg('Success!', 201, 'Cart Created Successfully', {
+      return res.status(201).jsend.success(successMsg('Cart Created Successfully!', 201, 'Create Carts', {
         error: false, operationStatus: 'Operation Successful!', newKart
       }));
     } catch (error) {
@@ -67,7 +88,7 @@ export default class Kart {
       const Karts = await Messanger.shouldFindObjects(db.Karts, {}).sort({ createdAt: 'desc' }).populate('productId');
 
       if (Karts.length) {
-        return res.status(200).jsend.success(successMsg('Success!', 200, 'Products returned from cart successfully', {
+        return res.status(200).jsend.success(successMsg('Products retrieved from cart successfully!', 200, 'Retrieve Product', {
           error: false, operationStatus: 'Operation Successful!', Karts
         }));
       }
@@ -78,6 +99,53 @@ export default class Kart {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all Karts', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
     }
   }
+
+  /**
+   * @method retrieveCustomerKarts
+   * @param {object} req The request object
+   * @param {object} res The response object
+   * @return {*} json
+   */
+  static async retrieveCustomerKarts(req, res) {
+    try {
+      // GET CUSTOMER ID
+      const tokenA = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
+      const result = tokenA ? await Utils.objectFromToken(db, req) : { error: false };
+
+      if (result.error) {
+        return res.status(403).jsend.fail(result);
+      }
+      const { _id: customerId } = result;
+
+      const { token } = req.query;
+
+      if (!token && !tokenA) {
+        return res.status(403).jsend.fail(errorMsg('EPERM', 403, '', 'Retrieve Carts', 'You are not logged in, please generate a code to complete this action!', {
+          error: false, operationStatus: 'Operation Terminated'
+        }));
+      }
+
+      let foundRecentKarts = null;
+
+      if (!tokenA) {
+        foundRecentKarts = await Messanger.shouldFindObjects(db.Karts, { kartCode: token, recentKart: true }).sort({ createdAt: 'desc' }).populate('productId');
+      } else {
+        foundRecentKarts = await Messanger.shouldFindObjects(db.Karts, { customerId, recentKart: true }).sort({ createdAt: 'desc' }).populate('productId');
+      }
+
+      if (foundRecentKarts && foundRecentKarts.length) {
+        return res.status(200).jsend.success(successMsg('Carts returned successfully!', 200, 'Retrieve Carts', {
+          error: false, operationStatus: 'Operation Successful!', foundRecentKarts
+        }));
+      }
+      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find One Customer Carts', 'No recent cart on your list!', {
+        error: false, operationStatus: 'Operation Ended', foundRecentKarts
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one Cart', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
+  }
+
 
   /**
    * @method editProduct

@@ -100,4 +100,34 @@ export default class Order {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all Orders', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
     }
   }
+
+  /**
+   * @method retrieveCustomerOrders
+   * @param {object} req The request object
+   * @param {object} res The response object
+   * @return {*} json
+   */
+  static async retrieveCustomerOrders(req, res) {
+    try {
+      const { _id: customerId } = req.user;
+      const { recent } = req.query;
+      const payload = recent ? { customerId, recent: recent === 'true' } : { customerId: '5dd45267ebee560e01fc0234' };
+      console.log(payload);
+
+      let foundOrders = null;
+
+      foundOrders = await Messanger.shouldFindObjects(db.Orders, payload).sort({ createdAt: 'desc' }).populate('productId');
+
+      if (foundOrders) {
+        return res.status(200).jsend.success(successMsg('Orders returned successfully!', 200, 'Retrieve Order', {
+          error: false, operationStatus: 'Operation Successful!', foundOrders
+        }));
+      }
+      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find One Customer Order', 'No recent order on your list!', {
+        error: false, operationStatus: 'Operation Ended', foundOrders
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one Cart', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
+  }
 }

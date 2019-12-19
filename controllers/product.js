@@ -1,6 +1,6 @@
 import db from '../models';
 import { errorMsg, successMsg } from '../utils/message';
-import Utils from '../helpers';
+// import Utils from '../helpers';
 import Services from '../utils/validation';
 import Messanger from '../helpers/messanger';
 
@@ -22,13 +22,14 @@ export default class Products {
 
       // Create product
       const {
-        productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading
+        productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading,
+        productCode, productColor, productTag
       } = req.body;
 
       const { _id: ownersId } = req.user;
 
       const newProduct = {
-        ownersId, productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading
+        ownersId, productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading, productCode, productColor, productTag
       };
 
       const product = await Messanger.shouldInsertToDataBase(db.Products, newProduct);
