@@ -11,7 +11,8 @@ export default {
     password: {
       field: 'password', required: true, min: 8, max: 15
     },
-    PhoneNumber: { field: 'phoneNumber', required: true, isPhoneNumber: true }
+    PhoneNumber: { field: 'phoneNumber', required: true, isPhoneNumber: true },
+    address: { field: 'userAddress' }
   },
   productCreateForm: {
     formType: 'create_product',
@@ -21,6 +22,8 @@ export default {
     productDesc: { field: 'productDescription', required: true },
     productBrand: { field: 'productBrand', required: true },
     productCategory: { field: 'productCategory', required: true },
+    productClr: { field: 'productColor', required: true },
+    productCd: { field: 'productCode', required: true },
     productCaptionHeading: { field: 'productCaptionHeading', required: true }
   },
   productEditFrom: {
@@ -39,8 +42,7 @@ export default {
   },
   kartForm: {
     formType: 'create_kart',
-    quatity: { field: 'quantity', isInteger: true, required: true },
-    itemId: { field: 'productId', required: true }
+    data: { field: 'kartData' }
   },
   editKartForm: {
     formType: 'edit_kart',

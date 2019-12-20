@@ -24,9 +24,9 @@ app.use(cors());
 /* = ==============
   SET BODY PARSER
 ================== */
-const json = bodyParser.json();
+const json = bodyParser.json({ limit: '50mb' });
 const urlencoded = bodyParser.urlencoded({
-  extended: true
+  extended: true, limit: '50mb'
 });
 app.use(urlencoded);
 app.use(json);

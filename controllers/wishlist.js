@@ -1,8 +1,8 @@
 import db from '../models';
 import Utils from '../helpers';
-import { errorMsg, successMsg } from '../utils/message';
 import Services from '../utils/validation';
 import Messanger from '../helpers/messanger';
+import { errorMsg, successMsg } from '../utils/message';
 
 /** @class WishList */
 export default class WishList {
@@ -29,11 +29,11 @@ export default class WishList {
       }
       const { _id: customerId } = result;
 
-      const { wishlistcode } = req.body;
+      const { wishlistcode, imageType } = req.body;
 
       if (!token && !wishlistcode) {
-        return res.status(403).jsend.fail(errorMsg('ValidationError', 403, '', 'Create WishList', 'You are not logged in, please generate a code to complete this action!', {
-          error: false, operationStatus: 'Operation Ended'
+        return res.status(403).jsend.fail(errorMsg('EPERM', 403, '', 'Create WishList', 'You are not logged in, please generate a code to complete this action!', {
+          error: false, operationStatus: 'Operation Terminated'
         }));
       }
 
@@ -48,29 +48,26 @@ export default class WishList {
       }
 
       if (!token) {
-        foundOnWishList = await Messanger.shouldFindOneObject(db.WishLists, { wishlistcode });
+        foundOnWishList = await Messanger.shouldFindOneObject(db.WishLists, {
+          wishlistcode, productId: req.params.productId, imageType, recentWish: true
+        });
       } else {
-        foundOnWishList = await Messanger.shouldFindOneObject(db.WishLists, { customerId });
+        foundOnWishList = await Messanger.shouldFindOneObject(db.WishLists, {
+          customerId, productId: req.params.productId, imageType, recentWish: true
+        });
       }
 
       // CHECK DUPLICATE RECORD
       if (foundOnWishList) {
-        if (!token && foundOnWishList.wishlistcode === wishlistcode && foundOnWishList.productId.equals(req.params.productId) && foundOnWishList.recentWish) {
-          return res.status(403).jsend.fail(errorMsg('CastError', 400, '', 'Create WishList', 'Product already on wishlist!', {
-            error: false, operationStatus: 'Operation Ended'
-          }));
-        }
-
-
-        if (foundOnWishList.customerId.equals(customerId) && foundOnWishList.productId.equals(req.params.productId) && foundOnWishList.recentWish) {
-          return res.status(403).jsend.fail(errorMsg('CastError', 400, '', 'Create WishList', 'Product already on wishlist!', {
-            error: false, operationStatus: 'Operation Ended'
-          }));
-        }
+        return res.status(403).jsend.fail(errorMsg('CastError', 400, '', 'Create WishList', 'Product already on wishlist!', {
+          error: false, operationStatus: 'Operation Ended'
+        }));
       }
 
       // CREATE WISHLIST
-      const WishListData = { wishlistcode, customerId, productId: product._id };
+      const WishListData = {
+        wishlistcode, imageType, customerId, productId: product._id
+      };
 
       const newWishList = await Messanger.shouldInsertToDataBase(db.WishLists, WishListData);
 
@@ -114,20 +111,26 @@ export default class WishList {
   static async retrieveCustomerWishLists(req, res) {
     try {
       // GET CUSTOMER ID
-      const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
-      const result = token ? await Utils.objectFromToken(db, req) : { error: false };
+      const tokenA = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
+      const result = tokenA ? await Utils.objectFromToken(db, req) : { error: false };
 
       if (result.error) {
         return res.status(403).jsend.fail(result);
       }
       const { _id: customerId } = result;
 
-      const { wishlistcode } = req.params;
+      const { token } = req.query;
 
       let foundRecentWishLists = null;
 
-      if (!token) {
-        foundRecentWishLists = await Messanger.shouldFindObjects(db.WishLists, { wishlistcode, recentWish: true }).sort({ createdAt: 'desc' }).populate('productId');
+      if (!token && !tokenA) {
+        return res.status(403).jsend.fail(errorMsg('EPERM', 403, '', 'Retrieve WishList', 'You are not logged in, please generate a code to complete this action!', {
+          error: false, operationStatus: 'Operation Terminated'
+        }));
+      }
+
+      if (!tokenA) {
+        foundRecentWishLists = await Messanger.shouldFindObjects(db.WishLists, { wishlistcode: token, recentWish: true }).sort({ createdAt: 'desc' }).populate('productId');
       } else {
         foundRecentWishLists = await Messanger.shouldFindObjects(db.WishLists, { customerId, recentWish: true }).sort({ createdAt: 'desc' }).populate('productId');
       }
@@ -139,24 +142,6 @@ export default class WishList {
       }
       return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find One Customer WishLists', 'No recent wish on your list!', {
         error: false, operationStatus: 'Operation Ended', foundRecentWishLists
-      }));
-    } catch (error) {
-      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one WishList', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
-    }
-  }
-
-
-  /**
-   * @method generateWishToken
-   * @param {object} req The request object
-   * @param {object} res The response object
-   * @return {*} json
-   */
-  static async generateWishToken(req, res) {
-    try {
-      const generateCode = Utils.generateTextCode(7);
-      return res.status(200).jsend.success(successMsg('Success!', 200, 'You Wishlist Code Generated Successfully!', {
-        error: false, operationStatus: 'Operation Successful!', whislist_token: generateCode
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one WishList', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));

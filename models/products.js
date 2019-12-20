@@ -22,12 +22,21 @@ const ProductSchema = new Schema({
     type: String,
     trim: true,
   },
-  productImages: [{ image: { type: String, trim: true } }],
+  productColor: String,
+  productTag: String,
+  productCode: String,
+  productImages: [{ image: { type: String, trim: true }, id: { type: Number } }],
   productStatus: { type: String, default: 'In-Stock' },
-  productBrand: String,
+  productBrand: {
+    type: String,
+    trim: true
+  },
   productCategory: String,
   productDemandStatus: String,
-  productCaptionHeading: String,
+  productCaptionHeading: {
+    type: String,
+    trim: true
+  },
   onOrderCount: { type: Number, default: 0 },
   inCartCount: { type: Number, default: 0 },
   lastUserEdited: Schema.Types.ObjectId

@@ -5,6 +5,7 @@ const router = Router();
 
 router.post('/create', Kart.createKart);
 router.get('/all', Kart.retrieveKarts);
+router.get('/customer', Kart.retrieveCustomerKarts);
 router.put('/edit', Kart.editProductInKart);
 router.delete('/delete/:kartId', Kart.deleteFromKart);
 
