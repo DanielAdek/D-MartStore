@@ -25,10 +25,6 @@ const ReviewSchema = new Schema({
     trim: true,
     default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQstdTNjhaUfy_tu_qrbawsAFJuOWrqJLzLnjjdB9P4oSeyJabX5w&s'
   },
-  rating: {
-    type: Number,
-    default: 5
-  },
   review: {
     type: String,
     trim: true,

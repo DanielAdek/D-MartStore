@@ -53,11 +53,18 @@ export default class Review {
         }));
       }
 
+      const foundReview = await Messanger.shouldFindOneObject(db.Reviews, { customerId, productId: req.params.productId });
+
+      if (foundReview) {
+        return res.status(400).jsend.fail(errorMsg('DuplicationError', 400, '', 'Create Review', 'You have already reviewed this product', {
+          error: false, operationStatus: 'Operation Terminated'
+        }));
+      }
+
       // CREATE REVIEW
       const reviewData = {
         review,
         customerId,
-        rating: rating || 0,
         productId: product._id,
         username: (result.username || username || Utils.defaultName),
         email: (result.email || email),

@@ -77,8 +77,9 @@ export default class Products {
 
       if (product) {
         const relatedProducts = await Messanger.shouldFindObjects(db.Products, { productCategory: product.productCategory }).sort({ createdAt: 'desc' });
+        const reviews = await Messanger.shouldFindObjects(db.Reviews, { productId: product._id }).sort({ createdAt: 'desc' });
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
-          error: false, operationStatus: 'Operation Successful!', product, relatedProducts
+          error: false, operationStatus: 'Operation Successful!', product, relatedProducts, reviews
         }));
       }
 

@@ -55,3 +55,17 @@ exports.shouldInsertOneOrMoreObjects = (database, requestBody) => {
     database.create(requestBody);
   }
 };
+
+/**
+ * @desc INSERT OR UPDATE DATA
+ * @param {Document} database DATA-BASE TO RECEIVE DATA
+ * @param {object} requestBody THE REQUEST BODY TO BE USED
+ * @returns {object} JSON
+ */
+exports.shouldInsertOrUpdateObject = async (database, requestBody) => {
+  const foundObject = await database.findById(requestBody.id);
+  if (foundObject) {
+    return database.findByIdAndUpdate(requestBody.id, requestBody.data);
+  }
+  return database.create(requestBody.data);
+};
