@@ -8,6 +8,6 @@ router.post('/create', Customer.createAccount);
 router.post('/login', Customer.login);
 router.get('/generate/code', Customer.generateCode);
 router.get('/details', verifyToken, Customer.retrieveCustomerDetails);
-router.put('/edit/:userId', Customer.editProfile);
+router.put('/edit', verifyToken, Customer.editProfile);
 
 export default router;
