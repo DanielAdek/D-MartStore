@@ -75,7 +75,7 @@ export default class Customers {
       const passwordMatch = await user.comparePassword(req.body.password);
 
       if (!passwordMatch) {
-        return res.status(401).jsend.fail(errorMsg('Authentication Error', 401, 'password', 'Authenticate user', 'Password Incorrect!', { error: true, operationStatus: 'Process Terminated', user: null }));
+        return res.status(401).jsend.fail(errorMsg('AuthenticationError', 401, 'password', 'Authenticate user', 'Password Incorrect!', { error: true, operationStatus: 'Process Terminated', user: null }));
       }
 
       const token = Utils.generateToken('8760h', { id: user._id });
@@ -112,7 +112,6 @@ export default class Customers {
    */
   static async retrieveCustomerDetails(req, res) {
     try {
-      console.log({ _id: req.user._id });
       const user = await Messanger.shouldFindOneObject(db.Users, { _id: req.user._id });
       return res.status(200).jsend.success(successMsg('Success!', 200, 'Customer Details Retrieved Successfully!', {
         error: false, operationStatus: 'Operation Successful!', user
@@ -129,6 +128,34 @@ export default class Customers {
    * @return {*} json
    */
   static async editProfile(req, res) {
-    // YOUR CODE IS REQUIRED
+    try {
+      const {
+        username, avatar, email, phoneNumber, userAddress
+      } = req.body;
+
+      const user = await Messanger.shouldFindOneObject(db.Users, { _id: req.user._id });
+      if (!user) {
+        return res.status(401).jsend.fail(errorMsg('AuthenticationError', 401, '', 'User not found', { error: true, operationStatus: 'Process Terminated', user: null }));
+      }
+
+      const requestBody = {
+        id: req.user._id,
+        newData: {
+          username: username || user.username,
+          avatar: avatar || user.avatar,
+          email: email || user.email,
+          phoneNumber: phoneNumber || user.phoneNumber,
+          userAddress: userAddress || user.userAddress
+        }
+      };
+
+      const userProfile = await Messanger.shouldEditOneObject(db.Users, requestBody);
+
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'Customer Details Updated Successfully!', {
+        error: false, operationStatus: 'Operation Successful!', userProfile
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Edit user', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
   }
 }
