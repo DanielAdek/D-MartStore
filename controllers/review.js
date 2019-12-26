@@ -72,6 +72,7 @@ export default class Review {
       };
 
       const newReview = await Messanger.shouldInsertToDataBase(db.Reviews, reviewData);
+      await Messanger.shouldInsertToDataBase(db.Ratings, { customerId, productId: req.params.productId, rating: rating || 0 });
 
       return res.status(201).jsend.success(successMsg('Success!', 201, 'Thanks for your review on this product!', {
         error: false, operationStatus: 'Operation Successful!', newReview
