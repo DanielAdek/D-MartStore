@@ -53,8 +53,9 @@ export default class Products {
       const products = await Messanger.shouldFindObjects(db.Products, {}).sort({ createdAt: 'desc' }).populate('ownersId');
 
       if (products.length) {
+        const ratings = await Messanger.shouldFindObjects(db.Ratings, {});
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Products returned Successfully', {
-          error: false, operationStatus: 'Operation Successful!', products
+          error: false, operationStatus: 'Operation Successful!', products, ratings
         }));
       }
       return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find all product', 'Nothing Found For Products!', {
@@ -77,14 +78,15 @@ export default class Products {
 
       if (product) {
         const relatedProducts = await Messanger.shouldFindObjects(db.Products, { productCategory: product.productCategory }).sort({ createdAt: 'desc' });
-        const reviews = await Messanger.shouldFindObjects(db.Reviews, { productId: product._id }).sort({ createdAt: 'desc' });
+        const ratings = await Messanger.shouldFindObjects(db.Ratings, {});
+        const reviews = await Messanger.shouldFindObjects(db.Reviews, { productId: req.params.productId });
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
-          error: false, operationStatus: 'Operation Successful!', product, relatedProducts, reviews
+          error: false, operationStatus: 'Operation Successful!', product, relatedProducts, ratings, reviews
         }));
       }
 
       return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find one product', 'Nothing found for request!', {
-        error: false, operationStatus: 'Operation Completed',
+        error: false, operationStatus: 'Operation Completed'
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
