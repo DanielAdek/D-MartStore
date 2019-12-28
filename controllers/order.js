@@ -31,7 +31,7 @@ export default class Order {
 
       const {
         recipientName, recipientDeliveryAdr, recipientEmail, productId,
-        recipientPhoneNumber, recipientOrderNote, orderPaymentOption
+        recipientPhoneNumber, recipientOrderNote, orderPaymentOption, sumTotalOrdersPrice
       } = req.body;
 
       const pricesOfProducts = [];
@@ -42,11 +42,11 @@ export default class Order {
         pricesOfProducts.push(await Messanger.shouldFindOneObject(db.Products, { _id: product._id }));
       }
 
-      // CALCULATE ORDER AMOUT
-      const sumTotalOrdersPrice = pricesOfProducts.reduce((prevVal, currentVal) => {
-        prevVal += currentVal.productPrice;
-        return prevVal;
-      }, 0);
+      // CALCULATE ORDER AMOUNT
+      // const sumTotalOrdersPrice = pricesOfProducts.reduce((prevVal, currentVal) => {
+      //   prevVal += currentVal.productPrice;
+      //   return prevVal;
+      // }, 0);
 
       // CREATE ORDER
       const orderData = {
@@ -70,7 +70,7 @@ export default class Order {
         await product.save();
       }
 
-      return res.status(201).jsend.success(successMsg('Success!', 201, 'Order Created Successfully', {
+      return res.status(201).jsend.success(successMsg('Order Created Successfully!', 201, 'Create Order', {
         error: false, operationStatus: 'Operation Successful!', newOrder
       }));
     } catch (error) {
@@ -89,7 +89,7 @@ export default class Order {
       const Orders = await Messanger.shouldFindObjects(db.Orders, {}).sort({ createdAt: 'desc' }).populate('productId');
 
       if (Orders.length) {
-        return res.status(200).jsend.success(successMsg('Success!', 200, 'Orders returned Successfully', {
+        return res.status(200).jsend.success(successMsg('Orders returned Successfully!', 200, 'Retreive Order', {
           error: false, operationStatus: 'Operation Successful!', Orders
         }));
       }
@@ -111,8 +111,7 @@ export default class Order {
     try {
       const { _id: customerId } = req.user;
       const { recent } = req.query;
-      const payload = recent ? { customerId, recent: recent === 'true' } : { customerId: '5dd45267ebee560e01fc0234' };
-      console.log(payload);
+      const payload = recent ? { customerId, recent: recent === 'true' } : { customerId };
 
       let foundOrders = null;
 

@@ -45,8 +45,8 @@ export default class Kart {
         for (const product of products) {
           // eslint-disable-next-line no-restricted-syntax
           for (const Item of kartData) {
-            if (product._id.equals(Item.productId)) {
-              Item.cummulativePrice = product.productPrice * Item.quantity;
+            if (product._id.equals(Item.productId._id)) {
+              Item.cummulativePrice = product.productPrice;
               if (token) { Item.customerId = customerId; }
               if (!token) { Item.kartCode = kartCode; }
             }

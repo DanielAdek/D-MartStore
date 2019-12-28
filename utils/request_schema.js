@@ -37,6 +37,7 @@ export default {
     email: { field: 'recipientEmail', isEmail: true },
     phone: { field: 'recipientPhoneNumber', isPhoneNumber: true },
     note: { field: 'recipientOrderNote' },
+    totalPrice: { field: 'sumTotalOrdersPrice', required: true },
     payOpt: { field: 'orderPaymentOption', required: true },
     productId: { field: 'productId', required: true, isArray: true }
   },

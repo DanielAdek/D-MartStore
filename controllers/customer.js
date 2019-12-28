@@ -151,6 +151,16 @@ export default class Customers {
 
       const userProfile = await Messanger.shouldEditOneObject(db.Users, requestBody);
 
+      if (avatar) {
+        const userReviews = await Messanger.shouldFindObjects(db.Reviews, { customerId: requestBody.id });
+        // eslint-disable-next-line no-restricted-syntax
+        for (const customer of userReviews) {
+          customer.avatar = avatar;
+          // eslint-disable-next-line no-await-in-loop
+          await customer.save();
+        }
+      }
+
       return res.status(200).jsend.success(successMsg('Success!', 200, 'Customer Details Updated Successfully!', {
         error: false, operationStatus: 'Operation Successful!', userProfile
       }));
