@@ -8,6 +8,7 @@
   "scripts": {
     "start": "babel-node app",
     "start_dev": "nodemon --exec babel-node app",
+    "heroku-postbuild": "npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
