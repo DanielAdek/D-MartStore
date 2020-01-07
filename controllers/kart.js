@@ -92,8 +92,8 @@ export default class Kart {
           error: false, operationStatus: 'Operation Successful!', Karts
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find all products in cart', 'Nothing Found For Karts!', {
-        error: false, operationStatus: 'Operation Ended', Karts
+      return res.status(200).jsend.success(successMsg('Nothing found for products from cart', 200, 'Retrieve Product', {
+        error: false, operationStatus: 'Operation Successful!', Karts
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all Karts', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -138,8 +138,8 @@ export default class Kart {
           error: false, operationStatus: 'Operation Successful!', foundRecentKarts
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find One Customer Carts', 'No recent cart on your list!', {
-        error: false, operationStatus: 'Operation Ended', foundRecentKarts
+      return res.status(200).jsend.success(successMsg('Nothing found from Carts!', 200, 'Retrieve Carts', {
+        error: false, operationStatus: 'Operation Successful!', foundRecentKarts
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one Cart', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));

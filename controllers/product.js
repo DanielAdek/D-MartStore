@@ -58,8 +58,8 @@ export default class Products {
           error: false, operationStatus: 'Operation Successful!', products, ratings
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find all product', 'Nothing Found For Products!', {
-        error: false, operationStatus: 'Operation Ended', products
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'Noting found from products', {
+        error: false, operationStatus: 'Operation Successful!', products
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all products', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));

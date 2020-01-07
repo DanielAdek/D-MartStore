@@ -140,8 +140,8 @@ export default class WishList {
           error: false, operationStatus: 'Operation Successful!', foundRecentWishLists
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find One Customer WishLists', 'No recent wish on your list!', {
-        error: false, operationStatus: 'Operation Ended', foundRecentWishLists
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'WishList returned nothing!', {
+        error: false, operationStatus: 'Operation Successful!', foundRecentWishLists
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one WishList', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
