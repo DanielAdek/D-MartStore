@@ -47,10 +47,7 @@ exports.shouldDeleteOneObject = (database, requestBody) => database.findByIdAndR
  */
 exports.shouldInsertOneOrMoreObjects = (database, requestBody) => {
   if (Array.isArray(requestBody)) {
-    // eslint-disable-next-line no-restricted-syntax
-    // for (const object of requestBody) {
     database.insertMany(requestBody);
-    // }
   } else {
     database.create(requestBody);
   }
