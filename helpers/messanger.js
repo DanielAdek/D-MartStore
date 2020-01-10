@@ -19,9 +19,10 @@ exports.shouldFindOneObject = (database, requestBody) => database.findOne(reques
  * @desc FIND FROM DB
  * @param {Document} database DATA-BASE TO RECEIVE DATA
  * @param {object} requestBody THE REQUEST BODY TO BE USED
+ * @param {object} projection THE PROJECTION REQUEST TO BE USED
  * @returns {object} JSON
  */
-exports.shouldFindObjects = (database, requestBody) => database.find(requestBody);
+exports.shouldFindObjects = (database, requestBody, projection) => database.find(requestBody, projection);
 
 /**
  * @desc FIND AND UPDATE

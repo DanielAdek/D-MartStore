@@ -184,4 +184,61 @@ export default class Products {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'delete product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }
   }
+
+  /**
+   * @method retreiveProductsByQuery
+   * @param {object} req The request object
+   * @param {object} res The response object
+   * @return {*} json
+   */
+  static async retreiveProductsByQuery(req, res) {
+    try {
+      const { productCategory } = req.query;
+
+      let products;
+      if (productCategory === 'shop') products = await Messanger.shouldFindObjects(db.Products, {}).sort({ createdAt: 'desc' });
+      else products = await Messanger.shouldFindObjects(db.Products, { productCategory }).sort({ createdAt: 'desc' });
+
+
+      if (products) {
+        const ratings = await Messanger.shouldFindObjects(db.Ratings, {});
+        return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
+          error: false, operationStatus: 'Operation Successful!', products, ratings
+        }));
+      }
+
+      return res.status(200).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find one product', 'Nothing found for request!', {
+        error: false, operationStatus: 'Operation Completed'
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
+  }
+
+  /**
+   * @method retreiveFilterValuesForProducts
+   * @param {object} req The request object
+   * @param {object} res The response object
+   * @return {*} json
+   */
+  static async retreiveFilterValuesForProducts(req, res) {
+    try {
+      const productBrands = await Messanger.shouldFindObjects(db.Products, {}, { 'Product.productImages': 0 }).sort({ createdAt: 'desc' }).distinct('productBrand');
+      // const
+      const productPriceRange = await db.Products.aggregate([
+        {
+          $group: {
+            _id: null,
+            max: { $max: '$productPrice' },
+            min: { $min: '$productPrice' }
+          }
+        }
+      ]);
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
+        error: false, operationStatus: 'Operation Successful!', productBrands, productPriceRange
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
+  }
 }

@@ -59,7 +59,7 @@ export default class Kart {
 
       if (!Array.isArray(kartData) && typeof kartData === 'object') {
         const product = await Messanger.shouldFindOneObject(db.Products, { _id: kartData.productId });
-        kartData.cummulativePrice = product.productPrice * kartData.quantity;
+        kartData.cummulativePrice = product.productPrice * (kartData.quantity || 1);
         if (token) { kartData.customerId = customerId; }
         if (!token) { kartData.kartCode = kartCode; }
         product.inCartCount += 1;

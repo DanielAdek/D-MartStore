@@ -133,23 +133,23 @@ export default class Customers {
         username, avatar, email, phoneNumber, userAddress
       } = req.body;
 
-      const user = await Messanger.shouldFindOneObject(db.Users, { _id: req.user._id });
-      if (!user) {
+      const userObject = await Messanger.shouldFindOneObject(db.Users, { _id: req.user._id });
+      if (!userObject) {
         return res.status(401).jsend.fail(errorMsg('AuthenticationError', 401, '', 'User not found', { error: true, operationStatus: 'Process Terminated', user: null }));
       }
 
       const requestBody = {
         id: req.user._id,
         newData: {
-          username: username || user.username,
-          avatar: avatar || user.avatar,
-          email: email || user.email,
-          phoneNumber: phoneNumber || user.phoneNumber,
-          userAddress: userAddress || user.userAddress
+          username: username || userObject.username,
+          avatar: avatar || userObject.avatar,
+          email: email || userObject.email,
+          phoneNumber: phoneNumber || userObject.phoneNumber,
+          userAddress: userAddress || userObject.userAddress
         }
       };
 
-      const userProfile = await Messanger.shouldEditOneObject(db.Users, requestBody);
+      const user = await Messanger.shouldEditOneObject(db.Users, requestBody);
 
       if (avatar) {
         const userReviews = await Messanger.shouldFindObjects(db.Reviews, { customerId: requestBody.id });
@@ -162,7 +162,7 @@ export default class Customers {
       }
 
       return res.status(200).jsend.success(successMsg('Success!', 200, 'Customer Details Updated Successfully!', {
-        error: false, operationStatus: 'Operation Successful!', userProfile
+        error: false, operationStatus: 'Operation Successful!', user
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Edit user', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
