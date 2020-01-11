@@ -63,6 +63,8 @@ app.listen(app.get('port'), () => {
     console.info(message, app.get('port'), app.get('env'));
 
     console.info('  Press CTRL-C to stop\n');
+  } else {
+    console.log('App is running!');
   }
 });
 
