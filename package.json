@@ -6,7 +6,7 @@
   "author": "DanielAdek <maildaniel.me1@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "babel-node app",
+    "start": "babel-node app.js",
     "start_dev": "nodemon --exec babel-node app",
     "heroku-postbuild": "yarn start",
     "test": "echo \"Error: no test specified\" && exit 1"
