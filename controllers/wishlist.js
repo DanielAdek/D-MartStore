@@ -94,8 +94,8 @@ export default class WishList {
           error: false, operationStatus: 'Operation Successful!', WishLists
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find all WishLists', 'Nothing Found For WishLists!', {
-        error: false, operationStatus: 'Operation Ended', WishLists
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'WishList returned nothing!', {
+        error: false, operationStatus: 'Operation Successful!', WishLists
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all WishLists', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -161,7 +161,7 @@ export default class WishList {
 
       // CONFIRM WISH EXIST ON LIST
       if (!foundOnWishList) {
-        const defaultError = errorMsg('ExistenceError', 404, '', 'Delete wish from wishlist', 'Product does not exist in !', { error: true, operationStatus: 'Process Terminated!' });
+        const defaultError = errorMsg('ExistenceError', 404, '', 'Delete wish from wishlist', 'Product has already been deleted from wishlist or never existed!', { error: true, operationStatus: 'Process Terminated!' });
         return res.status(404).jsend.fail(defaultError);
       }
       // PERFORM DELETION

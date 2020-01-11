@@ -153,7 +153,7 @@ export default class Products {
 
       // CONFIRM PRODUCT EXIST
       if (!product) {
-        const defaultError = errorMsg('ExistenceError', 404, '', 'delete product', 'Product does not exist!', { error: true, operationStatus: 'Process Terminated!' });
+        const defaultError = errorMsg('ExistenceError', 404, '', 'delete product', 'Product has already been deleted! or never existed!', { error: true, operationStatus: 'Process Terminated!' });
         return res.status(404).jsend.fail(defaultError);
       }
 
@@ -207,8 +207,8 @@ export default class Products {
         }));
       }
 
-      return res.status(200).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find one product', 'Nothing found for request!', {
-        error: false, operationStatus: 'Operation Completed'
+      return res.status(200).jsend.success(successMsg('Success!', 200, 'Nothing found for request!', {
+        error: false, operationStatus: 'Operation Completed!', products, ratings: []
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));

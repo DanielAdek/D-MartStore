@@ -204,7 +204,7 @@ export default class Kart {
 
       // CONFIRM PRODUCT EXIST
       if (!kart) {
-        const defaultError = errorMsg('ExistenceError', 404, '', 'Delete product from kart', 'Product does not exist in kart!', { error: true, operationStatus: 'Process Terminated!' });
+        const defaultError = errorMsg('ExistenceError', 404, '', 'Delete product from kart', 'Product has already been deleted from cart or never existed!', { error: true, operationStatus: 'Process Terminated!' });
         return res.status(404).jsend.fail(defaultError);
       }
       // PERFORM DELETION
