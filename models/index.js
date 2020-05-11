@@ -11,8 +11,6 @@ import Ratings from './ratings';
 config();
 
 const options = {
-  reconnectTries: Number.MAX_VALUE,
-  reconnectInterval: 500,
   keepAlive: true,
   useCreateIndex: true,
   useNewUrlParser: true,
