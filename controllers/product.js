@@ -1,6 +1,5 @@
 import db from '../models';
 import { errorMsg, successMsg } from '../utils/message';
-// import Utils from '../helpers';
 import Services from '../utils/validation';
 import Messanger from '../helpers/messanger';
 
@@ -22,20 +21,28 @@ export default class Products {
 
       // Create product
       const {
-        productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading,
+        productName, productPrice, productDescription, productBrand, productCategory, productCaptionHeading,
         productCode, productColor, productTag
       } = req.body;
 
       const { _id: ownersId } = req.user;
 
+      const urls = [];
+      // SAVES IMAGE TO CLOUDINARY
+      if (req.files.length) {
+        req.files.forEach((file) => {
+          urls.push({ image: (file.secure_url || file.url), id: Date.now() });
+        });
+      }
+
       const newProduct = {
-        ownersId, productName, productImages, productPrice, productDescription, productBrand, productCategory, productCaptionHeading, productCode, productColor, productTag
+        ownersId, productName, productImages: urls, productPrice, productDescription, productBrand, productCategory, productCaptionHeading, productCode, productColor, productTag
       };
 
       const product = await Messanger.shouldInsertToDataBase(db.Products, newProduct);
 
       return res.status(201).jsend.success(successMsg('Success!', 201, 'Product Created Successfully', {
-        error: false, operationStatus: 'Operation Successful!', product
+        success: true, operationStatus: 'Operation Successful!', product
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Create Product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
@@ -53,13 +60,12 @@ export default class Products {
       const products = await Messanger.shouldFindObjects(db.Products, {}).sort({ createdAt: 'desc' }).populate('ownersId');
 
       if (products.length) {
-        const ratings = await Messanger.shouldFindObjects(db.Ratings, {});
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Products returned Successfully', {
-          error: false, operationStatus: 'Operation Successful!', products, ratings
+          success: true, operationStatus: 'Operation Successful!', products
         }));
       }
       return res.status(200).jsend.success(successMsg('Success!', 200, 'Noting found from products', {
-        error: false, operationStatus: 'Operation Successful!', products
+        success: true, operationStatus: 'Operation Successful!', products
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all products', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -74,19 +80,16 @@ export default class Products {
    */
   static async retrieveOneProduct(req, res) {
     try {
-      const product = await Messanger.shouldFindOneObject(db.Products, { _id: req.params.productId }).populate('ownersId');
-
+      const product = await Messanger.shouldFindOneObject(db.Products, { _id: req.params.productId });
       if (product) {
         const relatedProducts = await Messanger.shouldFindObjects(db.Products, { productCategory: product.productCategory }).sort({ createdAt: 'desc' });
-        const ratings = await Messanger.shouldFindObjects(db.Ratings, {});
-        const reviews = await Messanger.shouldFindObjects(db.Reviews, { productId: req.params.productId });
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
-          error: false, operationStatus: 'Operation Successful!', product, relatedProducts, ratings, reviews
+          success: true, operationStatus: 'Operation Successful!', product, relatedProducts
         }));
       }
 
       return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find one product', 'Nothing found for request!', {
-        error: false, operationStatus: 'Operation Completed'
+        error: true, operationStatus: 'Operation Completed'
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -131,7 +134,7 @@ export default class Products {
 
       const editedProduct = await Messanger.shouldEditOneObject(db.Products, { id: req.params.productId, newData });
 
-      return res.status(200).jsend.success(successMsg('Edited Successfuly!', 200, 'edit product', { error: false, operationStatus: 'Process Completed!', editedProduct }));
+      return res.status(200).jsend.success(successMsg('Edited Successfuly!', 200, 'edit product', { success: true, operationStatus: 'Process Completed!', editedProduct }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Edit product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }
@@ -179,7 +182,7 @@ export default class Products {
 
       await Messanger.shouldDeleteOneObject(db.Products, { id: req.params.productId });
 
-      return res.status(200).jsend.success(successMsg('Deleted Successfuly!', 200, 'delete product', { error: false, operationStatus: 'Process Completed!' }));
+      return res.status(200).jsend.success(successMsg('Deleted Successfuly!', 200, 'delete product', { success: true, operationStatus: 'Process Completed!' }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'delete product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }
@@ -201,14 +204,13 @@ export default class Products {
 
 
       if (products) {
-        const ratings = await Messanger.shouldFindObjects(db.Ratings, {});
         return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
-          error: false, operationStatus: 'Operation Successful!', products, ratings
+          success: true, operationStatus: 'Operation Successful!', products
         }));
       }
 
       return res.status(200).jsend.success(successMsg('Success!', 200, 'Nothing found for request!', {
-        error: false, operationStatus: 'Operation Completed!', products, ratings: []
+        success: true, operationStatus: 'Operation Completed!', products
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -234,8 +236,46 @@ export default class Products {
           }
         }
       ]);
-      return res.status(200).jsend.success(successMsg('Success!', 200, 'Product returned Successfully', {
-        error: false, operationStatus: 'Operation Successful!', productBrands, productPriceRange
+      return res.status(200).jsend.success(successMsg('Product returned Successfully!', 200, 'search product', {
+        success: true, operationStatus: 'Operation Successful!', productBrands, productPriceRange
+      }));
+    } catch (error) {
+      return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
+    }
+  }
+
+  /**
+   * @method deepSearchProduct
+   * @param {object} req The request object
+   * @param {object} res The response object
+   * @return {*} json
+   */
+  static async deepSearchProduct(req, res) {
+    try {
+      const { q } = req.query;
+      const conditions = [
+        { productBrand: { $regex: new RegExp(q), $options: 'i' } },
+        { productCategory: { $regex: new RegExp(q), $options: 'i' } },
+        { productName: { $regex: new RegExp(q), $options: 'i' } },
+        { productTag: { $regex: new RegExp(q), $options: 'i' } },
+        { productCaptionHeading: { $regex: new RegExp(q), $options: 'i' } },
+        { productDescription: { $regex: new RegExp(q), $options: 'i' } },
+      ];
+      // eslint-disable-next-line no-restricted-globals
+      const queryIsANumber = isNaN(Number(q));
+      if (!queryIsANumber) {
+        conditions.push({ productPrice: q });
+      }
+
+      const products = await Messanger.shouldFindObjects(db.Products, { $or: conditions }).sort({ createdAt: 'desc' });
+
+      if (!products.length) {
+        return res.status(200).jsend.success(successMsg('Nothing found for your search query!', 204, 'Search Product', {
+          success: true, operationStatus: 'Operation Successful!', products
+        }));
+      }
+      return res.status(200).jsend.success(successMsg('Product returned Successfully!', 200, 'search product', {
+        success: true, operationStatus: 'Operation Successful!', products
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one product', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));

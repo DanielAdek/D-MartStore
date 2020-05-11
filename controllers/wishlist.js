@@ -33,7 +33,7 @@ export default class WishList {
 
       if (!token && !wishlistcode) {
         return res.status(403).jsend.fail(errorMsg('EPERM', 403, '', 'Create WishList', 'You are not logged in, please generate a code to complete this action!', {
-          error: false, operationStatus: 'Operation Terminated'
+          error: true, operationStatus: 'Operation Terminated'
         }));
       }
 
@@ -42,8 +42,8 @@ export default class WishList {
       const product = await Messanger.shouldFindOneObject(db.Products, { _id: req.params.productId });
 
       if (!product) {
-        return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Create WishList', 'This product does not exist or has been deleted', {
-          error: false, operationStatus: 'Operation Ended', product
+        return res.status(404).jsend.fail(errorMsg('ErrorProductNotFound', 404, '', 'Create WishList', 'This product does not exist or has been deleted', {
+          error: true, operationStatus: 'Operation Ended', product
         }));
       }
 
@@ -59,8 +59,8 @@ export default class WishList {
 
       // CHECK DUPLICATE RECORD
       if (foundOnWishList) {
-        return res.status(403).jsend.fail(errorMsg('CastError', 400, '', 'Create WishList', 'Product already on wishlist!', {
-          error: false, operationStatus: 'Operation Ended'
+        return res.status(403).jsend.fail(errorMsg('DuplicateError', 400, '', 'Create WishList', 'Product already on wishlist!', {
+          error: true, operationStatus: 'Operation Ended'
         }));
       }
 
@@ -72,7 +72,7 @@ export default class WishList {
       const newWishList = await Messanger.shouldInsertToDataBase(db.WishLists, WishListData);
 
       return res.status(201).jsend.success(successMsg('Success!', 201, 'Product added to wishlist', {
-        error: false, operationStatus: 'Operation Successful!', newWishList
+        success: true, operationStatus: 'Operation Successful!', newWishList
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Create WishList', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
@@ -91,11 +91,12 @@ export default class WishList {
 
       if (WishLists.length) {
         return res.status(200).jsend.success(successMsg('Success!', 200, 'WishLists returned successfully', {
-          error: false, operationStatus: 'Operation Successful!', WishLists
+          success: true, operationStatus: 'Operation Successful!', WishLists
         }));
       }
+
       return res.status(200).jsend.success(successMsg('Success!', 200, 'WishList returned nothing!', {
-        error: false, operationStatus: 'Operation Successful!', WishLists
+        success: true, operationStatus: 'Operation Successful!', WishLists
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all WishLists', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -125,7 +126,7 @@ export default class WishList {
 
       if (!token && !tokenA) {
         return res.status(403).jsend.fail(errorMsg('EPERM', 403, '', 'Retrieve WishList', 'You are not logged in, please generate a code to complete this action!', {
-          error: false, operationStatus: 'Operation Terminated'
+          error: true, operationStatus: 'Operation Terminated'
         }));
       }
 
@@ -137,11 +138,11 @@ export default class WishList {
 
       if (foundRecentWishLists.length) {
         return res.status(200).jsend.success(successMsg('Success!', 200, 'WishList returned successfully!', {
-          error: false, operationStatus: 'Operation Successful!', foundRecentWishLists
+          success: true, operationStatus: 'Operation Successful!', foundRecentWishLists
         }));
       }
       return res.status(200).jsend.success(successMsg('Success!', 200, 'WishList returned nothing!', {
-        error: false, operationStatus: 'Operation Successful!', foundRecentWishLists
+        success: true, operationStatus: 'Operation Successful!', foundRecentWishLists
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one WishList', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -167,7 +168,7 @@ export default class WishList {
       // PERFORM DELETION
       await Messanger.shouldDeleteOneObject(db.WishLists, { id: req.params.wishlistId });
 
-      return res.status(200).jsend.success(successMsg('Deleted Successfuly!', 200, 'Deleted one wish from list', { error: false, operationStatus: 'Process Completed!' }));
+      return res.status(200).jsend.success(successMsg('Deleted Successfuly!', 200, 'Deleted one wish from list', { success: true, operationStatus: 'Process Completed!' }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'delete product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }

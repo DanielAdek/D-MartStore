@@ -34,6 +34,13 @@ export default class Order {
         recipientPhoneNumber, recipientOrderNote, orderPaymentOption, sumTotalOrdersPrice
       } = req.body;
 
+      // CONFIRM PRODUCTID IS AT LEAST ONE
+      if (!productId.length) {
+        return res.status(400).jsend.fail(errorMsg('BadRequest', 400, 'productId', 'Create Order', 'You cannot place order request on empty cart', {
+          error: true, operationStatus: 'Operation Terminated'
+        }));
+      }
+
       const pricesOfProducts = [];
 
       // eslint-disable-next-line no-restricted-syntax
@@ -71,7 +78,7 @@ export default class Order {
       }
 
       return res.status(201).jsend.success(successMsg('Order Created Successfully!', 201, 'Create Order', {
-        error: false, operationStatus: 'Operation Successful!', newOrder
+        success: true, operationStatus: 'Operation Successful!', newOrder
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Create Product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
@@ -90,11 +97,11 @@ export default class Order {
 
       if (Orders.length) {
         return res.status(200).jsend.success(successMsg('Orders returned Successfully!', 200, 'Retreive Order', {
-          error: false, operationStatus: 'Operation Successful!', Orders
+          success: true, operationStatus: 'Operation Successful!', Orders
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find all product', 'Nothing Found For Orders!', {
-        error: false, operationStatus: 'Operation Ended', Orders
+      return res.status(200).jsend.fail(errorMsg('ExistenceError', 204, '', 'Find all product', 'Nothing Found For Orders!', {
+        error: true, operationStatus: 'Operation Ended', Orders
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all Orders', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -113,17 +120,15 @@ export default class Order {
       const { recent } = req.query;
       const payload = recent ? { customerId, recent: recent === 'true' } : { customerId };
 
-      let foundOrders = null;
+      const foundOrders = await Messanger.shouldFindObjects(db.Orders, payload).sort({ createdAt: 'desc' }).populate('productId');
 
-      foundOrders = await Messanger.shouldFindObjects(db.Orders, payload).sort({ createdAt: 'desc' }).populate('productId');
-
-      if (foundOrders) {
-        return res.status(200).jsend.success(successMsg('Orders returned successfully!', 200, 'Retrieve Order', {
-          error: false, operationStatus: 'Operation Successful!', foundOrders
+      if (foundOrders.length) {
+        return res.status(200).jsend.success(successMsg('Orders returned successfully!', 200, 'Retrieve Customer Order', {
+          success: true, operationStatus: 'Operation Successful!', foundOrders
         }));
       }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find One Customer Order', 'No recent order on your list!', {
-        error: false, operationStatus: 'Operation Ended', foundOrders
+      return res.status(200).jsend.fail(successMsg('Orders returned nothing!', 204, '', 'Retrieve Customer Order', {
+        error: true, operationStatus: 'Operation Finished', foundOrders
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one Cart', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));

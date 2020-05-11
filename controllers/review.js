@@ -35,13 +35,13 @@ export default class Review {
 
       if (!rating && !review) {
         return res.status(400).jsend.fail(errorMsg('ValidationError', 400, '', 'Create Review', 'Please rate or add review note to proceed', {
-          error: false, operationStatus: 'Operation Ended'
+          error: true, operationStatus: 'Operation Ended'
         }));
       }
 
       if (!token && !email) {
         return res.status(400).jsend.fail(errorMsg('ValidationError', 400, '', 'Create Review', 'Please provide email!', {
-          error: false, operationStatus: 'Operation Ended'
+          error: true, operationStatus: 'Operation Ended'
         }));
       }
 
@@ -49,15 +49,15 @@ export default class Review {
 
       if (!product) {
         return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Create Review', 'Nothing Found! Check Product Id', {
-          error: false, operationStatus: 'Operation Ended', product
+          error: true, operationStatus: 'Operation Ended', product
         }));
       }
 
-      const foundReview = await Messanger.shouldFindOneObject(db.Reviews, { customerId, productId: req.params.productId });
+      const alreadyReviewed = product.reviews.filter(data => (customerId ? data.customerId.equals(customerId) : data.email === email));
 
-      if (foundReview) {
+      if (alreadyReviewed.length) {
         return res.status(400).jsend.fail(errorMsg('DuplicationError', 400, '', 'Create Review', 'You have already reviewed this product', {
-          error: false, operationStatus: 'Operation Terminated'
+          error: true, operationStatus: 'Operation Terminated'
         }));
       }
 
@@ -65,66 +65,21 @@ export default class Review {
       const reviewData = {
         review,
         customerId,
-        productId: product._id,
         username: (result.username || username || Utils.defaultName),
         email: (result.email || email),
         avatar: (result.avatar || Utils.defaultAvatar)
       };
 
-      const newReview = await Messanger.shouldInsertToDataBase(db.Reviews, reviewData);
-      await Messanger.shouldInsertToDataBase(db.Ratings, { customerId, productId: req.params.productId, rating: rating || 0 });
+      product.reviews.push(reviewData);
+      product.ratings.push({ customerId, rating: rating || 0 });
+
+      await product.save();
 
       return res.status(201).jsend.success(successMsg('Success!', 201, 'Thanks for your review on this product!', {
-        error: false, operationStatus: 'Operation Successful!', newReview
+        success: true, operationStatus: 'Operation Successful!'
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Create Review', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
-    }
-  }
-
-  /**
-   * @method retrieveReviews
-   * @param {object} req The request object
-   * @param {object} res The response object
-   * @return {*} json
-   */
-  static async retrieveReviews(req, res) {
-    try {
-      const reviews = await Messanger.shouldFindObjects(db.Reviews, {}).sort({ createdAt: 'desc' }).populate('productId');
-
-      if (reviews.length) {
-        return res.status(200).jsend.success(successMsg('Success!', 200, 'Reviews returned successfully', {
-          error: false, operationStatus: 'Operation Successful!', reviews
-        }));
-      }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find all reviews', 'Nothing Found For Reviews!', {
-        error: false, operationStatus: 'Operation Ended', reviews
-      }));
-    } catch (error) {
-      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all Reviews', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
-    }
-  }
-
-  /**
-   * @method retrieveOneReview
-   * @param {object} req The request object
-   * @param {object} res The response object
-   * @return {*} json
-   */
-  static async retrieveOneReview(req, res) {
-    try {
-      const review = await Messanger.shouldFindOneObject(db.Reviews, { _id: req.params.reviewId });
-
-      if (review) {
-        return res.status(200).jsend.success(successMsg('Success!', 200, 'Review returned successfully!', {
-          error: false, operationStatus: 'Operation Successful!', review
-        }));
-      }
-      return res.status(404).jsend.fail(errorMsg('ExistenceError', 404, '', 'Find one review', 'Review not found for provided Id!', {
-        error: false, operationStatus: 'Operation Ended', review
-      }));
-    } catch (error) {
-      return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one review', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
     }
   }
 
@@ -151,7 +106,6 @@ export default class Review {
         return res.status(404).jsend.fail(defaultError);
       }
 
-
       // GET CUSTOMER ID
       const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
       const result = token ? await Utils.objectFromToken(db, req) : { error: false };
@@ -171,7 +125,7 @@ export default class Review {
 
       const editedReview = await Messanger.shouldEditOneObject(db.Reviews, { id: req.params.reviewId, newData });
 
-      return res.status(200).jsend.success(successMsg('Edited Successfuly!', 200, 'Edit Review', { error: false, operationStatus: 'Process Completed!', editedReview }));
+      return res.status(200).jsend.success(successMsg('Edited Successfuly!', 200, 'Edit Review', { success: true, operationStatus: 'Process Completed!', editedReview }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Edit Review', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }

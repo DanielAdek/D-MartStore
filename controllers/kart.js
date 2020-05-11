@@ -35,7 +35,7 @@ export default class Kart {
 
       if (!kartCode && !token) {
         return res.status(400).jsend.fail(errorMsg('CastError', 400, 'req.query', 'Add product to kart', 'Token was not sent. Please reload your page!', {
-          error: false, operationStatus: 'Operation Ended'
+          error: true, operationStatus: 'Operation Ended'
         }));
       }
 
@@ -70,7 +70,7 @@ export default class Kart {
       const newKart = await Messanger.shouldInsertOneOrMoreObjects(db.Karts, kartData);
 
       return res.status(201).jsend.success(successMsg('Cart Created Successfully!', 201, 'Create Carts', {
-        error: false, operationStatus: 'Operation Successful!', newKart
+        success: true, operationStatus: 'Operation Successful!', newKart
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Create Product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
@@ -89,11 +89,11 @@ export default class Kart {
 
       if (Karts.length) {
         return res.status(200).jsend.success(successMsg('Products retrieved from cart successfully!', 200, 'Retrieve Product', {
-          error: false, operationStatus: 'Operation Successful!', Karts
+          success: true, operationStatus: 'Operation Successful!', Karts
         }));
       }
       return res.status(200).jsend.success(successMsg('Nothing found for products from cart', 200, 'Retrieve Product', {
-        error: false, operationStatus: 'Operation Successful!', Karts
+        success: true, operationStatus: 'Operation Successful!', Karts
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find all Karts', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -121,7 +121,7 @@ export default class Kart {
 
       if (!token && !tokenA) {
         return res.status(403).jsend.fail(errorMsg('EPERM', 403, '', 'Retrieve Carts', 'You are not logged in, please generate a code to complete this action!', {
-          error: false, operationStatus: 'Operation Terminated'
+          error: true, operationStatus: 'Operation Terminated'
         }));
       }
 
@@ -135,11 +135,11 @@ export default class Kart {
 
       if (foundRecentKarts && foundRecentKarts.length) {
         return res.status(200).jsend.success(successMsg('Carts returned successfully!', 200, 'Retrieve Carts', {
-          error: false, operationStatus: 'Operation Successful!', foundRecentKarts
+          success: true, operationStatus: 'Operation Successful!', foundRecentKarts
         }));
       }
       return res.status(200).jsend.success(successMsg('Nothing found from Carts!', 200, 'Retrieve Carts', {
-        error: false, operationStatus: 'Operation Successful!', foundRecentKarts
+        success: true, operationStatus: 'Operation Successful!', foundRecentKarts
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Find one Cart', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -185,7 +185,7 @@ export default class Kart {
         await kartItem.save();
       }
 
-      return res.status(200).jsend.success(successMsg('Edited Successfuly!', 200, 'Edit Item In Kart', { error: false, operationStatus: 'Process Completed!', allKarts }));
+      return res.status(200).jsend.success(successMsg('Edited Successfuly!', 200, 'Edit Item In Kart', { success: true, operationStatus: 'Process Completed!', allKarts }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'Edit Item In Kart', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }
@@ -217,7 +217,7 @@ export default class Kart {
 
       await product.save();
 
-      return res.status(200).jsend.success(successMsg('Deleted Successfuly!', 200, 'delete product', { error: false, operationStatus: 'Process Completed!' }));
+      return res.status(200).jsend.success(successMsg('Deleted Successfuly!', 200, 'delete product', { success: true, operationStatus: 'Process Completed!' }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, '', 'delete product', `${error.message}`, { error: true, operationStatus: 'Process Failed', err: error }));
     }

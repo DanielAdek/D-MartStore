@@ -44,7 +44,7 @@ export default class Customers {
     const token = Utils.generateToken('8760h', { id: user._id });
 
     return res.status(201).jsend.success(successMsg('Account created!', 201, 'Create Customer Account', {
-      error: false, operationStatus: 'Operation Successful!', user, token
+      success: true, operationStatus: 'Operation Successful!', user, token
     }));
   }
 
@@ -81,7 +81,7 @@ export default class Customers {
       const token = Utils.generateToken('8760h', { id: user._id });
 
       return res.status(200).jsend.success(successMsg('Authenticaton successful', 200, 'Authenting user', {
-        error: false, operationStatus: 'Process Completed', user, token
+        success: true, operationStatus: 'Process Completed', user, token
       }));
     }
     return res.status(400).jsend.fail(errorMsg('Authentication Error', 400, 'Email/Phone Number', 'Authenticate user', `${isPhone ? 'The phone number you provide is not found!' : 'The email you provide is not found!'}`, { error: true, operationStatus: 'Process Terminated', user: null }));
@@ -89,15 +89,15 @@ export default class Customers {
 
   /**
    * @method generateCode
-   * @param {object} req The request object
+   * @param {object} _ The request object
    * @param {object} res The response object
    * @return {*} json
    */
-  static async generateCode(req, res) {
+  static async generateCode(_, res) {
     try {
       const generateCode = Utils.generateTextCode(100);
       return res.status(200).jsend.success(successMsg('Success!', 200, 'Code Generated Successfully!', {
-        error: false, operationStatus: 'Operation Successful!', generatedCode: `eyJhbDMS.${generateCode}.eyJpZCI6IjVkZDQ1MjY3ZWJlZTU2MGUwMWZjMDIzNCIsImlhdCI6MTU3NjMyMTEzNiwiZXhwIjoxNjA3ODU3MTM2fQ`
+        success: true, operationStatus: 'Operation Successful!', generatedCode: `eyJhbDMS.${generateCode}.eyJpZCI6IjVkZDQ1MjY3ZWJlZTU2MGUwMWZjMDIzNCIsImlhdCI6MTU3NjMyMTEzNiwiZXhwIjoxNjA3ODU3MTM2fQ`
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Generate Code', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -114,7 +114,7 @@ export default class Customers {
     try {
       const user = await Messanger.shouldFindOneObject(db.Users, { _id: req.user._id });
       return res.status(200).jsend.success(successMsg('Success!', 200, 'Customer Details Retrieved Successfully!', {
-        error: false, operationStatus: 'Operation Successful!', user
+        success: true, operationStatus: 'Operation Successful!', user
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Retrieve user', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));
@@ -130,7 +130,7 @@ export default class Customers {
   static async editProfile(req, res) {
     try {
       const {
-        username, avatar, email, phoneNumber, userAddress
+        username, email, phoneNumber, userAddress
       } = req.body;
 
       const userObject = await Messanger.shouldFindOneObject(db.Users, { _id: req.user._id });
@@ -138,14 +138,17 @@ export default class Customers {
         return res.status(401).jsend.fail(errorMsg('AuthenticationError', 401, '', 'User not found', { error: true, operationStatus: 'Process Terminated', user: null }));
       }
 
+      // GET IMAGE TO URI
+      const avatar = req.file ? (req.file.secure_url || req.file.url) : null;
+
       const requestBody = {
         id: req.user._id,
         newData: {
-          username: username || userObject.username,
+          username: username !== 'undefined' ? username : userObject.username,
           avatar: avatar || userObject.avatar,
-          email: email || userObject.email,
-          phoneNumber: phoneNumber || userObject.phoneNumber,
-          userAddress: userAddress || userObject.userAddress
+          email: email !== 'undefined' ? email : userObject.email,
+          phoneNumber: phoneNumber !== 'undefined' ? phoneNumber : userObject.phoneNumber,
+          userAddress: userAddress !== 'undefined' ? userAddress : userObject.userAddress
         }
       };
 
@@ -161,8 +164,8 @@ export default class Customers {
         }
       }
 
-      return res.status(200).jsend.success(successMsg('Success!', 200, 'Customer Details Updated Successfully!', {
-        error: false, operationStatus: 'Operation Successful!', user
+      return res.status(200).jsend.success(successMsg('Customer Details Updated Successfully!', 200, 'Edit Profile', {
+        success: true, operationStatus: 'Operation Successful!', user
       }));
     } catch (error) {
       return res.status(500).jsend.fail(errorMsg(`${error.syscall || error.name || 'ServerError'}`, 500, `${error.path || 'No Field'}`, 'Edit user', `${error.message}`, { error: true, operationStatus: 'Processs Terminated!', errorSpec: error }));

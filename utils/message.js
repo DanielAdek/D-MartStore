@@ -33,7 +33,7 @@ export const errorMsg = (Stacktrace, statusCode, field, target, message, details
  * @returns {object} JSON
  */
 export const successMsg = (message, statusCode, target, details) => ({
-  error: false,
+  success: true,
   message: message || 'Success!',
   metadata: [
     {
