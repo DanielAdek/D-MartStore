@@ -24,12 +24,7 @@ mongoose
   .connect(
     process.env.DB_URI,
     options
-  )
-  .then(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Mongodb connected!');
-    }
-  });
+  ).then(() => console.log('Mongodb connected!'));
 
 if (process.env.NODE_ENV === 'development') {
   mongoose.set('debug', true);
