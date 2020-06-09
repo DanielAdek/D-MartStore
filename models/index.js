@@ -15,7 +15,9 @@ const options = {
   useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+  socketTimeoutMS: 999999999,
+  connectTimeoutMS: 3000
 };
 
 mongoose
